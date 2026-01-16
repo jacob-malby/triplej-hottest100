@@ -1,44 +1,37 @@
 import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
+const VOTES_KEY = "votes:v1";
 
-// Hash: field = person name, value = JSON votes array
-const KEY = "votes:v1";
-
-function norm(s: string) {
-  return (s || "").toLowerCase().replace(/[^a-z0-9]/g, "").trim();
-}
-
-export async function upsertPersonVotes(name: string, votes: string[]) {
-  const cleanName = (name || "").trim();
-  const cleanVotes = Array.from(new Set((votes || []).map(norm)))
-    .filter(Boolean)
-    .slice(0, 10);
-
-  await redis.hset(KEY, { [cleanName]: JSON.stringify(cleanVotes) });
-
-  return {
-    name: cleanName,
-    votes: cleanVotes,
-    createdAt: new Date().toISOString(),
-  };
+function normSongKey(s: string) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
 export async function getVotersForSong(songTitle: string): Promise<string[]> {
-  const target = norm(songTitle);
-  if (!target) return [];
+  const songKey = normSongKey(songTitle);
+  if (!songKey) return [];
 
-  const all = (await redis.hgetall<Record<string, string>>(KEY)) || {};
+  // hash: voterName -> JSON string array of normalized song keys
+  const all = await redis.hgetall<Record<string, string>>(VOTES_KEY);
+  if (!all) return [];
+
   const voters: string[] = [];
 
-  for (const [personName, raw] of Object.entries(all)) {
+  for (const [voterName, raw] of Object.entries(all)) {
+    if (!raw) continue;
+
+    let arr: unknown;
     try {
-      const votes = JSON.parse(raw) as string[];
-      if (Array.isArray(votes) && votes.includes(target)) voters.push(personName);
+      arr = JSON.parse(raw);
     } catch {
-      // ignore bad rows
+      continue;
+    }
+
+    if (Array.isArray(arr) && arr.includes(songKey)) {
+      voters.push(voterName);
     }
   }
 
+  voters.sort((a, b) => a.localeCompare(b));
   return voters;
 }
