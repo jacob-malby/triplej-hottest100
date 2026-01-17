@@ -24,6 +24,11 @@ export default function JoinPage() {
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // ✅ Browser tab title
+  useEffect(() => {
+    document.title = "Join the Party • Hottest 100 in Figtree";
+  }, []);
+
   const options = useMemo<Option[]>(() => {
     return SONGS.map((s) => {
       const label = `${s.songTitle} - ${s.artist}`;
@@ -149,6 +154,8 @@ export default function JoinPage() {
   );
 }
 
+/* ---------- PICKER ROW ---------- */
+
 function VotePickerRow({
   index,
   value,
@@ -185,9 +192,7 @@ function VotePickerRow({
         const len = el.value.length;
         try {
           el.setSelectionRange(len, len);
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
     });
   }
@@ -198,15 +203,12 @@ function VotePickerRow({
     requestAnimationFrame(() => inputRef.current?.focus());
   }
 
-  // Close when clicking outside (pointer covers mouse + touch)
   useEffect(() => {
     if (!open) return;
 
     function onPointer(e: PointerEvent) {
       const target = e.target as HTMLElement | null;
-      if (!target) return;
-      if (!rowRef.current) return;
-
+      if (!target || !rowRef.current) return;
       if (!rowRef.current.contains(target)) setOpen(false);
     }
 
@@ -249,14 +251,15 @@ function VotePickerRow({
           aria-label="Open song list"
           onClick={(e) => {
             e.preventDefault();
-            openPickerFocus(); // ✅ force open + focus (cursor/keyboard)
+            openPickerFocus();
           }}
           style={styles.dropdownBtn}
         >
-          <ChevronDown />
+          <span style={styles.dropdownIconWrap}>
+            <ChevronDown />
+          </span>
         </button>
 
-        {/* ✅ FIX: dropdown is inside voteField and absolutely positioned */}
         {open && (
           <div style={styles.dropdown}>
             {filtered.length === 0 ? (
@@ -267,7 +270,7 @@ function VotePickerRow({
                   key={o.label}
                   type="button"
                   style={styles.dropdownItem}
-                  onMouseDown={(e) => e.preventDefault()} // keep input focused
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => choose(o.label)}
                 >
                   <div style={styles.dropdownMain}>{o.songTitle}</div>
@@ -282,9 +285,18 @@ function VotePickerRow({
   );
 }
 
+/* ---------- ICON ---------- */
+
 function ChevronDown() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden focusable="false">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      style={{ display: "block" }} // ✅ removes baseline weirdness
+      aria-hidden
+      focusable="false"
+    >
       <path
         d="M6.7 9.2a1 1 0 0 1 1.4 0L12 13.1l3.9-3.9a1 1 0 1 1 1.4 1.4l-4.6 4.6a1 1 0 0 1-1.4 0L6.7 10.6a1 1 0 0 1 0-1.4z"
         fill="currentColor"
@@ -293,6 +305,8 @@ function ChevronDown() {
   );
 }
 
+/* ---------- STYLES ---------- */
+
 const styles: Record<string, React.CSSProperties> = {
   page: {
     minHeight: "100vh",
@@ -300,14 +314,16 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#EAF0FF",
     fontFamily:
       'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji"',
-    padding: "16px",
+    padding: 16,
   },
 
   shell: { maxWidth: 760, margin: "0 auto" },
 
   header: { marginBottom: 14 },
+
   title: { fontSize: 40, fontWeight: 900, margin: "0 0 8px" },
-  subtitle: { opacity: 0.8, fontSize: 16, margin: 0, lineHeight: 1.4 },
+
+  subtitle: { opacity: 0.8, fontSize: 16, margin: 0 },
 
   card: {
     background: "rgba(255,255,255,0.06)",
@@ -323,12 +339,11 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: 6,
     textTransform: "uppercase",
     letterSpacing: 0.8,
-    opacity: 0.9,
   },
 
   input: {
     width: "100%",
-    padding: "12px",
+    padding: 12,
     borderRadius: 14,
     border: "1px solid rgba(255,255,255,0.14)",
     background: "rgba(255,255,255,0.07)",
@@ -342,11 +357,11 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "space-between",
     marginTop: 16,
     marginBottom: 10,
-    alignItems: "baseline",
   },
 
   votesTitle: { fontWeight: 900, fontSize: 18 },
-  votesHint: { opacity: 0.7, fontSize: 16 },
+
+  votesHint: { opacity: 0.7 },
 
   votesGrid: { display: "grid", gap: 14 },
 
@@ -354,7 +369,6 @@ const styles: Record<string, React.CSSProperties> = {
     display: "grid",
     gridTemplateColumns: "44px 1fr",
     gap: 12,
-    alignItems: "start",
   },
 
   voteNum: {
@@ -367,11 +381,9 @@ const styles: Record<string, React.CSSProperties> = {
     background: "rgba(255,122,26,0.18)",
     border: "1px solid rgba(255,122,26,0.30)",
     color: "#FFD7B6",
-    marginTop: 2,
   },
 
-  // IMPORTANT: position relative so absolute dropdown anchors to this block
-  voteField: { position: "relative", width: "100%" },
+  voteField: { position: "relative" },
 
   voteInput: {
     width: "100%",
@@ -384,6 +396,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 18,
   },
 
+  // ✅ FIXED: robust vertical centering for the arrow
   dropdownBtn: {
     position: "absolute",
     right: 0,
@@ -396,12 +409,21 @@ const styles: Record<string, React.CSSProperties> = {
     borderLeft: "1px solid rgba(255,255,255,0.10)",
     borderRadius: "0 18px 18px 0",
     cursor: "pointer",
-    display: "grid",
-    placeItems: "center",
-    WebkitTapHighlightColor: "transparent",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    lineHeight: 0, // ✅ prevents font baseline drift
+    padding: 0,
   },
 
-  // ✅ Full-width dropdown anchored to the voteField
+  dropdownIconWrap: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: "100%",
+  },
+
   dropdown: {
     position: "absolute",
     left: 0,
@@ -423,23 +445,20 @@ const styles: Record<string, React.CSSProperties> = {
     border: "none",
     textAlign: "left",
     color: "#EAF0FF",
-    cursor: "pointer",
     borderBottom: "1px solid rgba(255,255,255,0.08)",
+    cursor: "pointer",
   },
 
-  dropdownMain: { fontWeight: 900, fontSize: 16, lineHeight: 1.25 },
-  dropdownSub: { fontSize: 13, opacity: 0.7, marginTop: 2 },
+  dropdownMain: { fontWeight: 900 },
 
-  dropdownEmpty: {
-    padding: 14,
-    fontSize: 14,
-    opacity: 0.8,
-  },
+  dropdownSub: { fontSize: 13, opacity: 0.7 },
+
+  dropdownEmpty: { padding: 14, opacity: 0.8 },
 
   button: {
     marginTop: 16,
     width: "100%",
-    padding: "14px",
+    padding: 14,
     borderRadius: 18,
     border: "1px solid rgba(255,122,26,0.35)",
     background: "rgba(255,122,26,0.22)",
@@ -468,6 +487,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   footer: { marginTop: 16 },
+
   backLink: {
     color: "#A9C6FF",
     textDecoration: "none",

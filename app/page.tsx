@@ -19,6 +19,11 @@ export default function Home() {
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Browser tab title
+  useEffect(() => {
+    document.title = "Hottest 100 in Figtree";
+  }, []);
+
   const pollMs = 4000;
 
   useEffect(() => {
@@ -30,6 +35,7 @@ export default function Home() {
         const qs = window.location.search || "";
         const res = await fetch(`/api/now-playing${qs}`, { cache: "no-store" });
         const json = (await res.json()) as ApiResponse;
+
         if (!cancelled) {
           setData(json);
           setLoading(false);
@@ -45,6 +51,7 @@ export default function Home() {
     }
 
     tick();
+
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
@@ -160,6 +167,8 @@ export default function Home() {
   );
 }
 
+/* ---------- QR ---------- */
+
 function JoinQr() {
   const [origin, setOrigin] = useState("");
 
@@ -191,10 +200,17 @@ function JoinQr() {
             <div style={styles.qrLoading}>Generating QR…</div>
           )}
         </div>
+
+        <div>
+          <div style={styles.qrUrlLabel}>Join link</div>
+          <div style={styles.qrUrl}>{joinUrl || "…"}</div>
+        </div>
       </div>
     </div>
   );
 }
+
+/* ---------- BACKGROUND ---------- */
 
 function BackgroundChrome() {
   return (
@@ -219,6 +235,8 @@ function SunSticker() {
     </div>
   );
 }
+
+/* ---------- STYLES ---------- */
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
@@ -257,8 +275,6 @@ const styles: Record<string, React.CSSProperties> = {
     border: "1px solid rgba(255,255,255,0.14)",
     fontWeight: 900,
     fontSize: 12,
-    letterSpacing: 0.6,
-    lineHeight: "34px",
   },
 
   pollPill: {
@@ -271,7 +287,6 @@ const styles: Record<string, React.CSSProperties> = {
     background: "rgba(255,122,26,0.22)",
     border: "1px solid rgba(255,122,26,0.30)",
     fontWeight: 800,
-    lineHeight: "34px",
   },
 
   title: { fontSize: 44, fontWeight: 900, margin: "10px 0" },
@@ -374,9 +389,18 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 14,
   },
 
-  qrImg: { width: 200, height: 200 },
+  qrImg: {
+    width: 200,
+    height: 200,
+    objectFit: "contain",
+    aspectRatio: "1 / 1",
+  },
 
   qrLoading: { color: "#000" },
+
+  qrUrlLabel: { fontSize: 12, marginTop: 6 },
+
+  qrUrl: { wordBreak: "break-all", fontSize: 12 },
 
   footer: { marginTop: 20 },
 
@@ -387,10 +411,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   footerPill: {
+    height: 32,
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    height: 32,
     padding: "0 12px",
     borderRadius: 999,
     background: "rgba(255,255,255,0.10)",
