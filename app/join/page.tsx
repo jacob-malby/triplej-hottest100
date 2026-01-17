@@ -1,26 +1,40 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { SONGS } from "@/app/data/songs";
 
 function norm(s: string) {
-  return (s || "").toLowerCase().replace(/\s+/g, " ").trim();
+  return (s || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
+    .trim();
 }
+
+type Option = {
+  label: string;
+  songTitle: string;
+  artist: string;
+  haystack: string;
+};
 
 export default function JoinPage() {
   const [name, setName] = useState("");
   const [voteInputs, setVoteInputs] = useState<string[]>(Array.from({ length: 10 }, () => ""));
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const options = useMemo(
-    () =>
-      SONGS.map((s) => ({
-        label: `${s.songTitle} - ${s.artist}`,
+  const options = useMemo<Option[]>(() => {
+    return SONGS.map((s) => {
+      const label = `${s.songTitle} - ${s.artist}`;
+      return {
+        label,
         songTitle: s.songTitle,
-      })),
-    []
-  );
+        artist: s.artist,
+        haystack: norm(`${s.songTitle} ${s.artist}`),
+      };
+    });
+  }, []);
 
   const labelToSongTitle = useMemo(() => {
     const m = new Map<string, string>();
@@ -46,13 +60,13 @@ export default function JoinPage() {
 
     if (!name.trim()) {
       setStatus("error");
-      setErrorMsg("Please enter your name/nickname.");
+      setErrorMsg("Please enter your name.");
       return;
     }
 
     if (votes.length === 0) {
       setStatus("error");
-      setErrorMsg("Select at least 1 song from the dropdown suggestions.");
+      setErrorMsg("Select at least 1 song.");
       return;
     }
 
@@ -74,20 +88,15 @@ export default function JoinPage() {
   }
 
   const headerText =
-    status === "saved"
-      ? "You’re in ✅"
-      : status === "saving"
-      ? "Saving…"
-      : "Join the party";
+    status === "saved" ? "You’re in ✅" : status === "saving" ? "Saving…" : "Join the party";
 
   return (
     <main style={styles.page}>
       <div style={styles.shell}>
         <header style={styles.header}>
-          <span style={styles.badge}>HOTTEST 100 • VOTER FORM</span>
           <h1 style={styles.title}>{headerText}</h1>
           <p style={styles.subtitle}>
-            Type to search songs, then pick from the dropdown. Submit up to 10 votes.
+            Tap a row to type — or hit the arrow to open the full song list.
           </p>
         </header>
 
@@ -96,34 +105,26 @@ export default function JoinPage() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Jacob / Mads / Big Kev"
+            placeholder="e.g. Cob / Jacob"
             style={styles.input}
+            inputMode="text"
             autoComplete="nickname"
           />
 
-          <datalist id="songs-list">
-            {options.map((o) => (
-              <option key={o.label} value={o.label} />
-            ))}
-          </datalist>
-
           <div style={styles.votesHeaderRow}>
             <div style={styles.votesTitle}>Your votes</div>
-            <div style={styles.votesHint}>Up to 10 (leave blanks if you want)</div>
+            <div style={styles.votesHint}>Up to 10</div>
           </div>
 
           <div style={styles.votesGrid}>
             {voteInputs.map((v, i) => (
-              <div key={i} style={styles.voteRow}>
-                <div style={styles.voteNum}>{i + 1}</div>
-                <input
-                  list="songs-list"
-                  value={v}
-                  onChange={(e) => setVote(i, e.target.value)}
-                  placeholder="Type song or artist…"
-                  style={styles.voteInput}
-                />
-              </div>
+              <VotePickerRow
+                key={i}
+                index={i}
+                value={v}
+                onChange={(next) => setVote(i, next)}
+                options={options}
+              />
             ))}
           </div>
 
@@ -132,19 +133,10 @@ export default function JoinPage() {
           </button>
 
           {status === "saved" && (
-            <div style={styles.success}>
-              ✅ Saved! You can close this tab or re-submit anytime to change your votes.
-            </div>
+            <div style={styles.success}>✅ Saved! You can re-submit anytime.</div>
           )}
 
           {status === "error" && <div style={styles.error}>❌ {errorMsg}</div>}
-
-          <div style={styles.tip}>
-            <span style={styles.tipDot} />
-            <span style={styles.tipText}>
-              If you don’t see your song, it’s probably because it isn’t in the party song list yet.
-            </span>
-          </div>
         </section>
 
         <footer style={styles.footer}>
@@ -157,6 +149,150 @@ export default function JoinPage() {
   );
 }
 
+function VotePickerRow({
+  index,
+  value,
+  onChange,
+  options,
+}: {
+  index: number;
+  value: string;
+  onChange: (v: string) => void;
+  options: Option[];
+}) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const rowRef = useRef<HTMLDivElement | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const filtered = useMemo(() => {
+    const q = norm(value);
+    if (!q) return options.slice(0, 60);
+
+    return options
+      .map((o) => ({ o, idx: o.haystack.indexOf(q) }))
+      .filter((x) => x.idx !== -1)
+      .sort((a, b) => a.idx - b.idx)
+      .slice(0, 80)
+      .map((x) => x.o);
+  }, [value, options]);
+
+  function openPickerFocus() {
+    setOpen(true);
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      const el = inputRef.current;
+      if (el) {
+        const len = el.value.length;
+        try {
+          el.setSelectionRange(len, len);
+        } catch {
+          // ignore
+        }
+      }
+    });
+  }
+
+  function choose(label: string) {
+    onChange(label);
+    setOpen(false);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
+  // Close when clicking outside (pointer covers mouse + touch)
+  useEffect(() => {
+    if (!open) return;
+
+    function onPointer(e: PointerEvent) {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      if (!rowRef.current) return;
+
+      if (!rowRef.current.contains(target)) setOpen(false);
+    }
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+
+    window.addEventListener("pointerdown", onPointer);
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      window.removeEventListener("pointerdown", onPointer);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rowRef} style={styles.voteRow}>
+      <div style={styles.voteNum}>{index + 1}</div>
+
+      <div style={styles.voteField}>
+        <input
+          ref={inputRef}
+          value={value}
+          onChange={(e) => {
+            onChange(e.target.value);
+            if (!open) setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          onClick={() => setOpen(true)}
+          placeholder="Search song or artist…"
+          style={styles.voteInput}
+          inputMode="text"
+          autoComplete="off"
+          spellCheck={false}
+        />
+
+        <button
+          type="button"
+          aria-label="Open song list"
+          onClick={(e) => {
+            e.preventDefault();
+            openPickerFocus(); // ✅ force open + focus (cursor/keyboard)
+          }}
+          style={styles.dropdownBtn}
+        >
+          <ChevronDown />
+        </button>
+
+        {/* ✅ FIX: dropdown is inside voteField and absolutely positioned */}
+        {open && (
+          <div style={styles.dropdown}>
+            {filtered.length === 0 ? (
+              <div style={styles.dropdownEmpty}>No matches</div>
+            ) : (
+              filtered.map((o) => (
+                <button
+                  key={o.label}
+                  type="button"
+                  style={styles.dropdownItem}
+                  onMouseDown={(e) => e.preventDefault()} // keep input focused
+                  onClick={() => choose(o.label)}
+                >
+                  <div style={styles.dropdownMain}>{o.songTitle}</div>
+                  <div style={styles.dropdownSub}>{o.artist}</div>
+                </button>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ChevronDown() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden focusable="false">
+      <path
+        d="M6.7 9.2a1 1 0 0 1 1.4 0L12 13.1l3.9-3.9a1 1 0 1 1 1.4 1.4l-4.6 4.6a1 1 0 0 1-1.4 0L6.7 10.6a1 1 0 0 1 0-1.4z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 const styles: Record<string, React.CSSProperties> = {
   page: {
     minHeight: "100vh",
@@ -164,174 +300,174 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#EAF0FF",
     fontFamily:
       'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji"',
-    padding: "22px 16px 30px",
+    padding: "16px",
   },
-  shell: {
-    maxWidth: 760,
-    margin: "0 auto",
-  },
-  header: {
-    marginBottom: 14,
-    padding: "8px 6px",
-  },
-  badge: {
-    display: "inline-flex",
-    alignItems: "center",
-    padding: "8px 12px",
-    borderRadius: 999,
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.12)",
-    letterSpacing: 0.6,
-    fontWeight: 900,
-    fontSize: 12,
-    textTransform: "uppercase",
-  },
-  title: {
-    fontSize: 40,
-    lineHeight: 1.08,
-    margin: "14px 0 8px",
-    letterSpacing: -0.6,
-    textShadow: "0 12px 40px rgba(0,0,0,0.35)",
-    fontWeight: 900,
-  },
-  subtitle: {
-    margin: 0,
-    opacity: 0.8,
-    lineHeight: 1.5,
-    fontSize: 14,
-  },
+
+  shell: { maxWidth: 760, margin: "0 auto" },
+
+  header: { marginBottom: 14 },
+  title: { fontSize: 40, fontWeight: 900, margin: "0 0 8px" },
+  subtitle: { opacity: 0.8, fontSize: 16, margin: 0, lineHeight: 1.4 },
+
   card: {
     background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.12)",
     borderRadius: 18,
+    padding: 16,
+    border: "1px solid rgba(255,255,255,0.12)",
     boxShadow: "0 18px 55px rgba(0,0,0,0.35)",
-    padding: 18,
-    backdropFilter: "blur(8px)",
   },
+
   label: {
-    display: "block",
-    marginTop: 4,
-    marginBottom: 8,
-    fontWeight: 900,
     fontSize: 12,
-    letterSpacing: 0.8,
+    fontWeight: 900,
+    marginBottom: 6,
     textTransform: "uppercase",
+    letterSpacing: 0.8,
     opacity: 0.9,
   },
+
   input: {
     width: "100%",
-    padding: "12px 12px",
-    fontSize: 16,
+    padding: "12px",
     borderRadius: 14,
     border: "1px solid rgba(255,255,255,0.14)",
     background: "rgba(255,255,255,0.07)",
     color: "#EAF0FF",
     outline: "none",
-    boxShadow: "inset 0 0 0 1px rgba(0,0,0,0)",
+    fontSize: 16,
   },
+
   votesHeaderRow: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "baseline",
-    gap: 10,
     marginTop: 16,
     marginBottom: 10,
-    flexWrap: "wrap",
+    alignItems: "baseline",
   },
-  votesTitle: {
-    fontWeight: 900,
-    fontSize: 14,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    opacity: 0.9,
-  },
-  votesHint: {
-    fontSize: 13,
-    opacity: 0.7,
-  },
-  votesGrid: {
-    display: "grid",
-    gap: 10,
-  },
+
+  votesTitle: { fontWeight: 900, fontSize: 18 },
+  votesHint: { opacity: 0.7, fontSize: 16 },
+
+  votesGrid: { display: "grid", gap: 14 },
+
   voteRow: {
     display: "grid",
-    gridTemplateColumns: "34px 1fr",
-    gap: 10,
-    alignItems: "center",
+    gridTemplateColumns: "44px 1fr",
+    gap: 12,
+    alignItems: "start",
   },
+
   voteNum: {
-    width: 34,
-    height: 34,
-    borderRadius: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 16,
     display: "grid",
     placeItems: "center",
     fontWeight: 900,
     background: "rgba(255,122,26,0.18)",
     border: "1px solid rgba(255,122,26,0.30)",
     color: "#FFD7B6",
+    marginTop: 2,
   },
+
+  // IMPORTANT: position relative so absolute dropdown anchors to this block
+  voteField: { position: "relative", width: "100%" },
+
   voteInput: {
     width: "100%",
-    padding: "12px 12px",
-    fontSize: 16,
-    borderRadius: 14,
+    padding: "14px 54px 14px 14px",
+    borderRadius: 18,
     border: "1px solid rgba(255,255,255,0.14)",
     background: "rgba(255,255,255,0.07)",
     color: "#EAF0FF",
     outline: "none",
+    fontSize: 18,
   },
-  button: {
-    marginTop: 14,
-    width: "100%",
-    padding: "13px 14px",
-    fontSize: 16,
+
+  dropdownBtn: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    width: 54,
+    height: "100%",
+    border: "none",
+    background: "rgba(255,255,255,0.06)",
+    color: "#EAF0FF",
+    borderLeft: "1px solid rgba(255,255,255,0.10)",
+    borderRadius: "0 18px 18px 0",
+    cursor: "pointer",
+    display: "grid",
+    placeItems: "center",
+    WebkitTapHighlightColor: "transparent",
+  },
+
+  // ✅ Full-width dropdown anchored to the voteField
+  dropdown: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: "calc(100% + 10px)",
     borderRadius: 16,
+    background: "rgba(8,20,44,0.96)",
+    border: "1px solid rgba(255,255,255,0.14)",
+    boxShadow: "0 18px 55px rgba(0,0,0,0.42)",
+    maxHeight: 320,
+    overflowY: "auto",
+    zIndex: 50,
+  },
+
+  dropdownItem: {
+    width: "100%",
+    padding: "12px 14px",
+    background: "transparent",
+    border: "none",
+    textAlign: "left",
+    color: "#EAF0FF",
+    cursor: "pointer",
+    borderBottom: "1px solid rgba(255,255,255,0.08)",
+  },
+
+  dropdownMain: { fontWeight: 900, fontSize: 16, lineHeight: 1.25 },
+  dropdownSub: { fontSize: 13, opacity: 0.7, marginTop: 2 },
+
+  dropdownEmpty: {
+    padding: 14,
+    fontSize: 14,
+    opacity: 0.8,
+  },
+
+  button: {
+    marginTop: 16,
+    width: "100%",
+    padding: "14px",
+    borderRadius: 18,
     border: "1px solid rgba(255,122,26,0.35)",
     background: "rgba(255,122,26,0.22)",
     color: "#FFE2C9",
     fontWeight: 900,
     cursor: "pointer",
+    fontSize: 18,
   },
+
   success: {
     marginTop: 12,
-    padding: "12px 12px",
+    padding: 12,
     borderRadius: 14,
-    background: "rgba(120, 255, 173, 0.10)",
-    border: "1px solid rgba(120, 255, 173, 0.22)",
-    color: "#D9FFE9",
+    background: "rgba(120,255,173,0.10)",
+    border: "1px solid rgba(120,255,173,0.22)",
     fontWeight: 800,
-    lineHeight: 1.4,
   },
+
   error: {
     marginTop: 12,
-    padding: "12px 12px",
+    padding: 12,
     borderRadius: 14,
-    background: "rgba(255, 70, 70, 0.12)",
-    border: "1px solid rgba(255, 70, 70, 0.24)",
-    color: "#FFE1E1",
+    background: "rgba(255,70,70,0.12)",
+    border: "1px solid rgba(255,70,70,0.24)",
     fontWeight: 800,
-    lineHeight: 1.4,
   },
-  tip: {
-    display: "flex",
-    gap: 10,
-    alignItems: "flex-start",
-    marginTop: 14,
-    paddingTop: 12,
-    borderTop: "1px solid rgba(255,255,255,0.10)",
-    opacity: 0.88,
-  },
-  tipDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 999,
-    background: "rgba(100,170,255,0.9)",
-    boxShadow: "0 0 0 4px rgba(100,170,255,0.15)",
-    marginTop: 4,
-    flex: "0 0 auto",
-  },
-  tipText: { fontSize: 13, lineHeight: 1.45, opacity: 0.85 },
-  footer: { marginTop: 16, padding: "0 6px" },
+
+  footer: { marginTop: 16 },
   backLink: {
     color: "#A9C6FF",
     textDecoration: "none",
