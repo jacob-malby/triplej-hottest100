@@ -114,7 +114,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* VOTERS FIRST */}
             {hasVoters && (
               <div style={styles.votersWrap}>
                 <div style={styles.votersLabel}>Voted by</div>
@@ -128,8 +127,9 @@ export default function Home() {
               </div>
             )}
 
-            {/* ACTIVITY TEXT (NORMAL STYLE ALWAYS) */}
-            <div style={styles.activityText}>{activity}</div>
+            <div style={hasVoters ? styles.activityTextHot : styles.activityText}>
+              {activity}
+            </div>
 
             {!hasVoters && (
               <div style={styles.tipRow}>
@@ -161,7 +161,7 @@ export default function Home() {
 }
 
 function JoinQr() {
-  const [origin, setOrigin] = useState<string>("");
+  const [origin, setOrigin] = useState("");
 
   useEffect(() => {
     setOrigin(window.location.origin);
@@ -191,11 +191,6 @@ function JoinQr() {
             <div style={styles.qrLoading}>Generating QR…</div>
           )}
         </div>
-
-        <div>
-          <div style={styles.qrUrlLabel}>Join link</div>
-          <div style={styles.qrUrl}>{joinUrl || "…"}</div>
-        </div>
       </div>
     </div>
   );
@@ -204,21 +199,36 @@ function JoinQr() {
 function BackgroundChrome() {
   return (
     <>
-      <div style={styles.bgTopGlow} />
-      <div style={styles.bgBottomGlow} />
-      <div style={styles.bgNoise} />
+      <div style={styles.bgSky} />
+      <div style={styles.bgCloudsA} />
+      <div style={styles.bgCloudsB} />
+      <div style={styles.bgCloudsC} />
+      <SunSticker />
+      <div style={styles.bgGrain} />
+      <div style={styles.bgScan} />
+      <div style={styles.bgVignette} />
     </>
+  );
+}
+
+function SunSticker() {
+  return (
+    <div style={styles.sunWrap} aria-hidden>
+      <div style={styles.sunSlice} />
+      <div style={styles.sunRays} />
+    </div>
   );
 }
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
     minHeight: "100vh",
-    background: "#07162C",
+    background: "#000e63",
     color: "#EAF0FF",
     position: "relative",
     overflow: "hidden",
   },
+
   shell: {
     maxWidth: 1100,
     margin: "0 auto",
@@ -226,26 +236,53 @@ const styles: Record<string, React.CSSProperties> = {
     position: "relative",
     zIndex: 2,
   },
+
   header: { marginBottom: 20 },
-  brandRow: { display: "flex", gap: 10, flexWrap: "wrap" },
+
+  brandRow: {
+    display: "flex",
+    gap: 10,
+    flexWrap: "wrap",
+    alignItems: "center",
+  },
+
   badge: {
-    padding: "6px 12px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 34,
+    padding: "0 14px",
     borderRadius: 999,
-    background: "rgba(255,255,255,0.1)",
-    fontWeight: 800,
+    background: "rgba(255,255,255,0.10)",
+    border: "1px solid rgba(255,255,255,0.14)",
+    fontWeight: 900,
     fontSize: 12,
+    letterSpacing: 0.6,
+    lineHeight: "34px",
   },
+
   pollPill: {
-    padding: "6px 12px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 34,
+    padding: "0 14px",
     borderRadius: 999,
-    background: "rgba(255,122,26,0.2)",
-    fontWeight: 700,
+    background: "rgba(255,122,26,0.22)",
+    border: "1px solid rgba(255,122,26,0.30)",
+    fontWeight: 800,
+    lineHeight: "34px",
   },
+
   title: { fontSize: 44, fontWeight: 900, margin: "10px 0" },
-  subRow: { display: "flex", gap: 10, flexWrap: "wrap" },
+
+  subRow: { display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" },
+
   link: { color: "#9EC3FF" },
-  dot: { opacity: 0.4 },
-  muted: { opacity: 0.7 },
+
+  dot: { opacity: 0.45 },
+
+  muted: { opacity: 0.78 },
 
   grid: { display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 14 },
 
@@ -253,69 +290,81 @@ const styles: Record<string, React.CSSProperties> = {
     background: "rgba(255,255,255,0.06)",
     borderRadius: 18,
     padding: 18,
-    border: "1px solid rgba(255,255,255,0.1)",
+    border: "1px solid rgba(255,255,255,0.12)",
+    backdropFilter: "blur(10px)",
   },
 
-  cardTop: { display: "flex", justifyContent: "space-between" },
-  cardLabel: { fontWeight: 800, fontSize: 12 },
+  cardTop: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  cardLabel: { fontWeight: 900, fontSize: 12 },
 
   accentChip: {
-    padding: "4px 10px",
+    padding: "6px 12px",
     borderRadius: 999,
     background: "rgba(100,160,255,0.15)",
   },
+
   accentChipHot: {
-    padding: "4px 10px",
+    padding: "6px 12px",
     borderRadius: 999,
-    background: "rgba(255,122,26,0.3)",
+    background: "rgba(255,122,26,0.26)",
   },
 
-  activityText: {
-    fontSize: 28,
-    fontWeight: 900,
-    marginTop: 14,
-  },
-
-  votersWrap: {
-    marginTop: 10,
-    marginBottom: 12,
-  },
+  votersWrap: { marginTop: 14, marginBottom: 18 },
 
   votersLabel: {
     fontSize: 12,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    fontWeight: 800,
-    marginBottom: 8,
-    opacity: 0.85,
+    fontWeight: 900,
+    marginBottom: 10,
   },
 
   votersList: {
     display: "flex",
-    gap: 10,
+    gap: 12,
     flexWrap: "wrap",
   },
 
   namePillHot: {
-    background: "rgba(255,122,26,0.25)",
-    border: "1px solid rgba(255,122,26,0.5)",
-    color: "#FFE1C4",
+    background: "rgba(255,122,26,0.22)",
+    border: "1px solid rgba(255,122,26,0.55)",
     fontSize: 20,
     fontWeight: 900,
     padding: "10px 16px",
     borderRadius: 999,
-    boxShadow: "0 8px 22px rgba(255,122,26,0.3)",
   },
 
-  tipRow: { marginTop: 12, opacity: 0.7 },
-  tipDot: { display: "none" },
+  activityText: { fontSize: 28, fontWeight: 900, marginTop: 16 },
+
+  activityTextHot: { fontSize: 28, fontWeight: 900 },
+
+  tipRow: {
+    marginTop: 14,
+    display: "flex",
+    gap: 10,
+    alignItems: "center",
+  },
+
+  tipDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    background: "#009ad6",
+  },
+
   tipText: { fontSize: 12 },
 
   qrWrap: { display: "flex", flexDirection: "column", gap: 10 },
+
   qrTitle: { fontSize: 20, fontWeight: 900 },
-  qrSub: { opacity: 0.7 },
+
+  qrSub: { opacity: 0.75 },
 
   qrBody: { display: "flex", gap: 14 },
+
   qrBox: {
     width: 220,
     height: 220,
@@ -324,39 +373,115 @@ const styles: Record<string, React.CSSProperties> = {
     placeItems: "center",
     borderRadius: 14,
   },
+
   qrImg: { width: 200, height: 200 },
 
   qrLoading: { color: "#000" },
 
-  qrUrlLabel: { fontSize: 12, marginTop: 6 },
-  qrUrl: { wordBreak: "break-all", fontSize: 12 },
-
   footer: { marginTop: 20 },
-  footerInner: { display: "flex", gap: 10 },
-  footerPill: {
-    background: "rgba(255,255,255,0.1)",
-    padding: "6px 10px",
-    borderRadius: 999,
-  },
-  footerText: { opacity: 0.8 },
 
-  bgTopGlow: {
-    position: "absolute",
-    inset: "-30% -20% auto -20%",
-    height: "60%",
-    background:
-      "radial-gradient(closest-side, rgba(255,122,26,0.35), transparent 70%)",
+  footerInner: {
+    display: "flex",
+    gap: 12,
+    alignItems: "center",
   },
-  bgBottomGlow: {
-    position: "absolute",
-    inset: "auto -20% -30% -20%",
-    height: "60%",
-    background:
-      "radial-gradient(closest-side, rgba(80,140,255,0.3), transparent 70%)",
+
+  footerPill: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 32,
+    padding: "0 12px",
+    borderRadius: 999,
+    background: "rgba(255,255,255,0.10)",
+    fontWeight: 900,
   },
-  bgNoise: {
+
+  footerText: { opacity: 0.82 },
+
+  bgSky: {
     position: "absolute",
     inset: 0,
-    opacity: 0.08,
+    background:
+      "radial-gradient(800px 400px at 20% 20%, rgba(0,154,214,0.22), transparent 60%), linear-gradient(#000e63, #000a44)",
+  },
+
+  bgCloudsA: {
+    position: "absolute",
+    inset: "-10%",
+    background:
+      "radial-gradient(circle at 30% 40%, rgba(0,154,214,0.25), transparent 70%), radial-gradient(circle at 70% 50%, rgba(0,154,214,0.22), transparent 70%)",
+    filter: "blur(12px)",
+    opacity: 0.5,
+  },
+
+  bgCloudsB: {
+    position: "absolute",
+    inset: "-10%",
+    background:
+      "repeating-linear-gradient(10deg, rgba(0,154,214,0.12) 0px, transparent 14px)",
+    opacity: 0.18,
+  },
+
+  bgCloudsC: {
+    position: "absolute",
+    left: "-15%",
+    right: "-15%",
+    bottom: "-20%",
+    height: "50%",
+    background:
+      "radial-gradient(circle at 20% 60%, rgba(0,154,214,0.25), transparent 70%), radial-gradient(circle at 80% 60%, rgba(0,154,214,0.20), transparent 70%)",
+    filter: "blur(16px)",
+  },
+
+  bgGrain: {
+    position: "absolute",
+    inset: 0,
+    background:
+      "repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0px, transparent 3px), repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, transparent 4px)",
+    opacity: 0.18,
+    mixBlendMode: "overlay",
+  },
+
+  bgScan: {
+    position: "absolute",
+    inset: 0,
+    background:
+      "repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0px, transparent 8px)",
+    opacity: 0.12,
+  },
+
+  bgVignette: {
+    position: "absolute",
+    inset: 0,
+    background:
+      "radial-gradient(circle at center, transparent 50%, rgba(0,0,0,0.45))",
+  },
+
+  sunWrap: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    width: 160,
+    height: 160,
+    pointerEvents: "none",
+  },
+
+  sunRays: {
+    position: "absolute",
+    inset: -30,
+    borderRadius: 999,
+    background:
+      "repeating-conic-gradient(rgba(255,122,26,0.0) 0deg 12deg, rgba(255,122,26,0.22) 12deg 14deg)",
+    opacity: 0.5,
+  },
+
+  sunSlice: {
+    position: "absolute",
+    inset: 20,
+    borderRadius: 999,
+    background:
+      "radial-gradient(circle, rgba(255,230,180,0.9) 0%, rgba(255,180,90,0.85) 35%, rgba(255,122,26,0.95) 70%, rgba(170,60,10,0.95) 100%), repeating-conic-gradient(rgba(255,240,200,0.3) 0deg 6deg, transparent 6deg 20deg)",
+    boxShadow: "0 16px 40px rgba(255,122,26,0.25)",
   },
 };

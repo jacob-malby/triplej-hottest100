@@ -527,7 +527,7 @@ export const SONGS: SongRow[] = [
     "Voters give safe passage: choose one person to be immune from the next punishment, and another person to drink 3 sips now."
 },
 {
-  songTitle: "Hide and Seek [Like A Version]",
+  songTitle: "Hide and Seek [triple j Like A Version 2025]",
   artist: "Ball Park Music",
   generalActivity:
     "HIDE & SEEK MINI: everyone covers eyes; one person hides an object in the room. First person to find it gives out 2 sips; last person drinks 2 sips.",
@@ -671,12 +671,12 @@ export const SONGS: SongRow[] = [
     "Voters multiply it: pick one person to take 4 sips now, then 1 sip the next time anyone drinks."
 },
 {
-  songTitle: "Khe Sanh",
+  songTitle: "Khe Sanh [triple j Like A Version 2025]",
   artist: "Beddy Rays",
   generalActivity:
     "SING OR SIP: if you can sing ANY line from this song, you’re safe. If you can’t, drink 2 sips.",
   voterActivity:
-    "Voters pick a singer: target must sing a line from ANY song OR drink 4 sips."
+    "Voters get to choose someone who has to give them a 'beer and shit cocaine' (full drink and a bump if they have one)."
 },
 {
   songTitle: "Pocket Rocket",
