@@ -18,9 +18,9 @@ export const SONGS: SongRow[] = [
   songTitle: "Fame Is A Gun",
   artist: "Addison Rae",
   generalActivity:
-    "PAPARAZZI ROUND: everyone poses for an imaginary camera. Worst pose (vote) drinks 3 sips.",
+    "Nerf/water gun battle.",
   voterActivity:
-    "Voters ‘take the shot’: silently point at someone — if they notice within 3 seconds, YOU drink 2; if they don’t, THEY drink 4."
+    "Voters choose someone to take a shot."
 },
 {
   songTitle: "Headphones On",
@@ -532,7 +532,7 @@ export const SONGS: SongRow[] = [
   generalActivity:
     "HIDE & SEEK MINI: everyone covers eyes; one person hides an object in the room. First person to find it gives out 2 sips; last person drinks 2 sips.",
   voterActivity:
-    "Voters choose the seeker: pick someone to search for 10 seconds. If they fail, they drink 3."
+    "Voters are the seekers. Play hide and seek. Countdown from 30. First 3 people found have to finish their drinks."
 },
 {
   songTitle: "Overwhelming Sound",
@@ -546,9 +546,9 @@ export const SONGS: SongRow[] = [
   songTitle: "Please Don't Move To Melbourne",
   artist: "Ball Park Music",
   generalActivity:
-    "MOVE HISTORY: anyone who has moved cities/states drinks 2 sips. If you’ve never moved, give 1 sip.",
+    "Anyone who has been to Melbourne drinks 2 sips.",
   voterActivity:
-    "Voters issue a travel ban: pick someone to speak in a fake Melbourne accent for 30 seconds OR drink 4 sips."
+    "Voters choose someone to run to Jacaranda Avenue (sorta toward Melbourne, I guess)."
 },
 {
   songTitle: "Backseat",
@@ -610,7 +610,7 @@ export const SONGS: SongRow[] = [
   songTitle: "check",
   artist: "bbno$",
   generalActivity:
-    "CHECKPOINT: everyone checks their drink level. Lowest level drinks 2 sips; highest level gives 1 sip.",
+    "Canadian beer pong (bbno$ is Canadian).",
   voterActivity:
     "Voters do a ‘check-in’: choose someone to show their last photo (safe) OR drink 4 sips."
 },
@@ -618,7 +618,7 @@ export const SONGS: SongRow[] = [
   songTitle: "1-800",
   artist: "bbno$ & Ironmouse",
   generalActivity:
-    "PHONE CALL: everyone mimes answering a call and says ‘hello?’ in their best voice. Worst delivery (vote) drinks 2 sips.",
+    "Canadian beer pong (bbno$ is Canadian).",
   voterActivity:
     "Voters dial someone: say their name — they must ‘answer’ with a catchphrase. If they blank, they drink 3 sips."
 },
@@ -626,12 +626,12 @@ export const SONGS: SongRow[] = [
   songTitle: "bing bong",
   artist: "bbno$ & VNLLA",
   generalActivity:
-    "BING BONG CHAIN: go around the circle saying “bing” then “bong”. First mistake drinks 3 sips.",
+    "Canadian beer pong (bbno$ is Canadian).",
   voterActivity:
     "Voters hit the bell: pick someone — they must shout “BING BONG!” before their next sip. If they forget, drink 3."
 },
 {
-  songTitle: "Sway",
+  songTitle: "Sway [triple J Like A Version 2025]",
   artist: "beabadoobee",
   generalActivity:
     "SWAY & RHYME: everyone sways and then you go around rhyming with “sway” (day, play, say...). First fail drinks 3 sips.",
@@ -676,7 +676,7 @@ export const SONGS: SongRow[] = [
   generalActivity:
     "SING OR SIP: if you can sing ANY line from this song, you’re safe. If you can’t, drink 2 sips.",
   voterActivity:
-    "Voters get to choose someone who has to give them a 'beer and shit cocaine' (full drink and a bump if they have one)."
+    "GROWING NEED FOR BEER AND SHIT COCAINE: Voters get to choose someone to give them a full drink and a bump (if they have one)."
 },
 {
   songTitle: "Pocket Rocket",
@@ -1101,7 +1101,7 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "The Subway",
   artist: "Chappell Roan",
-  generalActivity: "Transit trivia: go around naming train lines/stations/cities with subways — first stuck drinks 3.",
+  generalActivity: "Everyone says their Subway order. Worst order, voted by group, drinks 3.",
   voterActivity: "Voters pick a ‘ticket inspector’: they can demand one person show a valid ‘ticket’ (any card). No card = 2 sips.",
 },
 {
@@ -1168,7 +1168,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Chains & Whips",
   artist: "Clipse & Kendrick Lamar",
   generalActivity: "Restriction round: everyone drinks using non-dominant hand — first spill or swap hands drinks 2.",
-  voterActivity: "Voters pick someone to be ‘chained’: elbows must stay on knees for next sip; fail = 3 sips.",
+  voterActivity: "Voters pick someone to tell their most wild sex story. Any chains and whips?",
 },
 {
   songTitle: "Burna",
@@ -1251,7 +1251,7 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Call On Me",
   artist: "Daniel Caesar",
-  generalActivity: "Phone-a-friend: go around naming people you’d call in an emergency — repeats drink 2.",
+  generalActivity: "Canadian beer pong (Daniel Caesar is Canadian).",
   voterActivity: "Voters ‘call on’ one person to answer a quick question; refusal = 3 sips.",
 },
 {
@@ -1414,7 +1414,7 @@ export const SONGS: SongRow[] = [
   songTitle: "No Broke Boys",
   artist: "Disco Lines & Tinashe",
   generalActivity: "Wallet check: anyone with a card on them gives 1; anyone with cash gives 2; anyone with neither drinks 2.",
-  voterActivity: "Voters pick a ‘sugar’ who must pay 2 sips for someone else’s next punishment.",
+  voterActivity: "Voters need to put $50 on the pokies at the pub and play until they get a feature (or run out of money). There cannot be any broke boys.",
 },
 {
   songTitle: "The Great Tree",
@@ -1486,7 +1486,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Anxiety",
   artist: "Doechii",
   generalActivity: "Overthink round: everyone says one irrational fear — duplicates drink 2.",
-  voterActivity: "Voters pick a calming ritual (deep breath / touch floor). Last to do it drinks 2.",
+  voterActivity: "Voters have to share their biggest fear. They then get to give out 3 sips.",
 },
 {
   songTitle: "Nosebleeds",
@@ -1515,8 +1515,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Dreamin [Ft. Daya]",
   artist: "Dom Dolla",
-  generalActivity: "Dream list: go around naming dream destinations — first repeat drinks 3.",
-  voterActivity: "Voters pick someone to ‘nap’: sit on the floor for 10 seconds OR drink 3.",
+  generalActivity: "People who have ever told someone about a dream they had, drink 3. So fucking boring.",
+  voterActivity: "Voters pick someone to ‘nap’: go to Dan's bedroom for 10 minutes.",
 },
 {
   songTitle: "No Room For A Saint [Ft. Nathan Nicholson]",
@@ -1605,20 +1605,20 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "GIMME A HUG",
   artist: "Drake",
-  generalActivity: "Hug or chug: everyone chooses hug (give 1 sip) or no-hug (drink 2).",
-  voterActivity: "Voters pick two people to do a ‘side hug’ toast; if either refuses, both drink 2.",
+  generalActivity: "Canadian beer pong (Drake is Canadian).",
+  voterActivity: "Everyone gives the voter a hug.",
 },
 {
   songTitle: "NOKIA",
   artist: "Drake",
-  generalActivity: "Old phone flex: anyone who’s owned a Nokia drinks 2; anyone who’s never owned a physical keyboard phone drinks 1.",
-  voterActivity: "Voters pick someone to T9-type a word in the air; if the group can’t guess it, they drink 3.",
+  generalActivity: "Canadian beer pong (Drake is Canadian).",
+  voterActivity: "Voters choose someone to open their Recently Deleted folder on their phone.",
 },
 {
   songTitle: "What Did I Miss?",
   artist: "Drake",
-  generalActivity: "Late tax: anyone who arrived late drinks 2; earliest arrival gives out 2.",
-  voterActivity: "Voters pick someone to give a 10-second recap; if they go over, they drink 2 (you missed the point).",
+  generalActivity: "Canadian beer pong (Drake is Canadian).",
+  voterActivity: "Voters choose someone to leave the party for 10 minutes.",
 },
 {
   songTitle: "Get Knocked Down",
@@ -1954,7 +1954,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Is It Real [Ft. Ravyn Lenae]",
   artist: "Flume & JPEGMAFIA",
   generalActivity: "Reality Check: everyone says one ‘true’ fact and one made-up fact about themselves. Vote which is fake—if they fool you, you drink 1; if you guess right, they drink 1.",
-  voterActivity: "Glitch: choose someone— they must speak in robot voice for 15 seconds OR drink 3."
+  voterActivity: "Voters take an item of clothing off."
 },
 {
   songTitle: "Don't Stop Dreaming",
@@ -2025,8 +2025,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "You're a Star",
   artist: "Fred again.. & Amyl and The Sniffers",
-  generalActivity: "Star Signs: everyone reveals their star sign (or guesses). If your guess is wrong, drink 2; if right, give 1.",
-  voterActivity: "Spotlight: choose someone to name 3 celebrities in 5 seconds OR drink 3."
+  generalActivity: "Callum Faulkner finishes his drink for his various drama roles throughout high school",
+  voterActivity: "Voters choose someone to name 3 stars OR drink 3."
 },
 {
   songTitle: "HARDSTYLE 2",
@@ -2038,7 +2038,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Talk of the Town",
   artist: "Fred again.., Sammy Virji & Reggie",
   generalActivity: "Rumour Mill: go around making up a headline about someone in the room (no names, keep it silly). Worst headline (vote) drinks 2.",
-  voterActivity: "Tea Time: choose someone to say ‘I heard…’ and finish the sentence. If they laugh, drink 3."
+  voterActivity: "Talk: Voters choose someone to tell an interesting story that no one at the party has heard. If they refuse, the story's shit or someone has heard the story, they drink 3."
 },
 {
   songTitle: "Winny",
@@ -2079,8 +2079,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Disco Cowgirl",
   artist: "G Flip",
-  generalActivity: "CATEGORY ROUND: go around naming disco songs OR famous cowboys/cowgirls. First to hesitate drinks 3 sips.",
-  voterActivity: "Voters pick a ‘dance partner’ who must mirror their moves for 10 seconds OR drink 3."
+  generalActivity: "CATEGORY ROUND: go around naming famous cowboys/cowgirls. First to hesitate drinks 3 sips.",
+  voterActivity: "Voters pick someone to ride them like a cowgirl for 10 seconds."
 },
 {
   songTitle: "I Don't Wanna Regret",
@@ -2098,13 +2098,13 @@ export const SONGS: SongRow[] = [
   songTitle: "Cobra",
   artist: "Geese",
   generalActivity: "SNAKE REACTION: everyone makes a hiss. Quietest hiss drinks 2 sips.",
-  voterActivity: "Voters ‘bite’: choose someone to drink 4 sips."
+  voterActivity: "Snake bite: Voters choose someone to have a shot."
 },
 {
   songTitle: "Taxes",
   artist: "Geese",
   generalActivity: "TAX TIME: everyone guesses how much tax they *think* they pay (wild guess). Highest guess drinks 3 sips.",
-  voterActivity: "Voters claim a ‘refund’: take 0 sips next time you’re told to drink."
+  voterActivity: "Voters have a sip of everyone's drinks. Pay your tax!"
 },
 {
   songTitle: "DEATH CULT ZOMBIE",
@@ -2811,8 +2811,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Dancing2",
   artist: "Keli Holiday",
-  generalActivity: "Dance Battle: everyone does TWO moves (any moves) on the spot. Least enthusiastic (group vote) drinks 2 sips.",
-  voterActivity: "2-Step Tax: choose someone to do a clean 2-step for 5 seconds OR sip 3."
+  generalActivity: "5 is jive.",
+  voterActivity: "Voters choose someone to dance."
 },
 {
   songTitle: "Ecstasy",
@@ -2920,7 +2920,7 @@ export const SONGS: SongRow[] = [
   songTitle: "H.O.O.D - 2025 Mix",
   artist: "KNEECAP",
   generalActivity: "Hood Roll Call: anyone wearing a hoodie/jumper drinks 2 sips. No hoodie? Give out 1 sip.",
-  voterActivity: "Acronym Attack: choose someone to invent what H.O.O.D stands for in 5 seconds. If it’s weak, they sip 3."
+  voterActivity: "Voters need to ride Goose's shoulders whilst he tells his smegma story - he's wearing a H.O.O.D and explaining what was under his H.O.O.D."
 },
 {
   songTitle: "THE RECAP [Ft. Mozey]",
@@ -3069,20 +3069,20 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Pussy Palace",
   artist: "Lily Allen",
-  generalActivity: "Royal Court: all queens (self-declared) drink 2 sips.",
-  voterActivity: "Palace Guard: choose someone to bow and give out 3 sips."
+  generalActivity: "Girls finish their drinks.",
+  voterActivity: "Voters choose the biggest player to finish their drink. Poor Lily Allen :("
 },
 {
   songTitle: "West End Girl",
   artist: "Lily Allen",
-  generalActivity: "City Girls: all people born in cities drink 2 sips. Country kids give 1 sip.",
-  voterActivity: "Street Performer: choose someone to do a fake busker performance OR sip 3."
+  generalActivity: "All people born in Sydney or Wollongong cities drink 2 sips.",
+  voterActivity: "Voter has to answer if they've ever cheated on a partner. Poor Lily Allen :("
 },
 {
   songTitle: "Melodramatic Fanatic",
   artist: "Lime Cordiale & Ruel",
-  generalActivity: "Drama Round: everyone overreacts to nothing for 3 seconds. Least dramatic drinks 2 sips.",
-  voterActivity: "Oscar Moment: choose someone to fake cry OR sip 3."
+  generalActivity: "Anyone who did drama in school or a drama extra-curricular drinks 3 sips.",
+  voterActivity: "Voters are the judge of a try not to cringe challenge. Least cringy act loses."
 },
 {
   songTitle: "Born Again [Ft. Doja Cat & RAYE]",
@@ -3124,7 +3124,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Lion",
   artist: "Little Simz & Obongjayar",
   generalActivity: "Animal Kingdom: go around naming jungle animals. First mistake drinks 2 sips.",
-  voterActivity: "Alpha Move: choose someone to roar OR sip 3."
+  voterActivity: "Sim Simma, who got the keys to my bloodclaat Bimmer: the voters kiss Tom on the lips."
 },
 {
   songTitle: "I Could Love U",
@@ -3172,7 +3172,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Hammer",
   artist: "Lorde",
   generalActivity: "Tool Time: go around naming tools. First blank drinks 2 sips.",
-  voterActivity: "Construction Boss: choose someone to give out 3 sips."
+  voterActivity: "Voters choose someone to punch as hard as they can in the arm."
 },
 {
   songTitle: "Man Of The Year",
@@ -3190,7 +3190,7 @@ export const SONGS: SongRow[] = [
   songTitle: "What Was That",
   artist: "Lorde",
   generalActivity: "Confusion Round: everyone makes a confused face. Last person drinks 2 sips.",
-  voterActivity: "Explain It: choose someone to explain something fake OR sip 3."
+  voterActivity: "Voters choose 2 people to kiss each other."
 },
 {
   songTitle: "Can We Talk When It's Over",
@@ -3279,7 +3279,7 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Home",
   artist: "Mac DeMarco",
-  generalActivity: "Everyone says where they would rather be right now. If two answers match, both drink 2 sips.",
+  generalActivity: "Whoever's home it is has to take their pants off. It's their home, after all!",
   voterActivity: "Choose someone to build a pillow 'home' fort OR sip 3."
 },
 {
@@ -3292,7 +3292,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Funny Papers",
   artist: "Mac Miller",
   generalActivity: "Headline Game: everyone makes up a fake newspaper headline. Worst one drinks 2 sips.",
-  voterActivity: "Editor-in-Chief: choose someone to roast another player OR sip 3."
+  voterActivity: "Voters have to have a cigarette (a funny paper)."
 },
 {
   songTitle: "Ashes to Ashes [triple j Like A Version 2025]",
@@ -3747,8 +3747,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "iPod Touch",
   artist: "Ninajirachi",
-  generalActivity: "Throwback Tech: anyone who owned an iPod (any kind) drinks 2 sips.",
-  voterActivity: "Screen Tap: choose someone to do a 10-second ‘air DJ’ set OR sip 3."
+  generalActivity: "Anyone who owned an iPod (any kind) drinks 2 sips.",
+  voterActivity: "Voters get to iPod Touch Dan anywhere on his body."
 },
 {
   songTitle: "Drenched",
@@ -3777,8 +3777,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Love Balloon",
   artist: "Ocean Alley",
-  generalActivity: "Pop Round: go around naming things that can pop. First to stall drinks 2 sips.",
-  voterActivity: "Inflation Station: choose someone to pretend to blow up a balloon with sound effects OR sip 3."
+  generalActivity: "People who have done a nang drink 2 sips.",
+  voterActivity: "Voters kiss. If only one, choose someone to kiss."
 },
 {
   songTitle: "Bodies [with JID]",
@@ -3838,13 +3838,13 @@ export const SONGS: SongRow[] = [
   songTitle: "Man I Need",
   artist: "Olivia Dean",
   generalActivity: "Gentlemen’s Round: all guys drink 2 sips.",
-  voterActivity: "Smooth Talker: choose someone to give a cheesy pickup line OR sip 3."
+  voterActivity: "All boys have to kiss each voter on the cheek and be the man they need."
 },
 {
   songTitle: "Nice To Each Other",
   artist: "Olivia Dean",
   generalActivity: "Kindness Tax: everyone compliments the person to their left. Last person drinks 2 sips.",
-  voterActivity: "Sweet Talk: choose someone to flirt politely OR sip 3."
+  voterActivity: "Everyone has to pay the voters a compliment each. They vote on the least genuine complimenter."
 },
 {
   songTitle: "Sexy To Someone [triple j Like A Version 2025]",
@@ -3856,7 +3856,7 @@ export const SONGS: SongRow[] = [
   songTitle: "So Easy (To Fall In Love)",
   artist: "Olivia Dean",
   generalActivity: "Hopeless Romantics: anyone who’s caught feelings too fast drinks 2 sips.",
-  voterActivity: "Heart Eyes: choose someone to make heart eyes at another player OR sip 3."
+  voterActivity: "Voters choose 2 people to kiss or finish their drinks."
 },
 {
   songTitle: "Distant Strangers [Ft. The Kid LAROI & Imogen Heap]",
@@ -3910,7 +3910,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Working Class Hero",
   artist: "Pacific Avenue",
   generalActivity: "Job Check: anyone who worked today drinks 2 sips.",
-  voterActivity: "Union Boss: choose someone to demand a fake pay rise OR sip 3."
+  voterActivity: "Everyone has to give the voters a note from their wallet (if they have one). They're a working class hero ffs."
 },
 {
   songTitle: "Coming 2 Terms",
@@ -3940,7 +3940,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Sorry",
   artist: "Parcels",
   generalActivity: "Apology Round: go around saying fake apologies. First to laugh drinks 2 sips.",
-  voterActivity: "Overdramatic Sorry: choose someone to apologise on their knees OR sip 3."
+  voterActivity: "Voters choose someone to apologise to them for something they did to them that they're still not over."
 },
 {
   songTitle: "Summerinlove",
@@ -4011,8 +4011,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Illegal",
   artist: "PinkPantheress",
-  generalActivity: "Crime Scene: anyone who’s jaywalked recently drinks 2 sips.",
-  voterActivity: "Bad Influence: choose someone to confess a petty crime OR sip 3."
+  generalActivity: "Anyone who's had a run-in with the police finishes their drink.",
+  voterActivity: "Voters choose someone to arrest. If they catch them, they finish their drink."
 },
 {
   songTitle: "Romeo",
@@ -4065,8 +4065,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Keith",
   artist: "Playlunch",
-  generalActivity: "Name Drop: anyone who knows a Keith drinks 2 sips.",
-  voterActivity: "Dad Energy: choose someone to tell a dad joke OR sip 3."
+  generalActivity: "Everyone pair off and arm wrestle — loser drinks 2 sips.",
+  voterActivity: "Voters have to place a $10 bet on the Hottest 100 winner. They initially saw Keith at the Malvern TAB."
 },
 {
   songTitle: "Real Estate Apps",
@@ -4173,8 +4173,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "WHERE IS MY HUSBAND!",
   artist: "RAYE",
-  generalActivity: "Single Roll Call: all single players drink 2 sips.",
-  voterActivity: "Marriage Proposal: choose someone to fake-propose OR sip 3."
+  generalActivity: "All single players drink 2 sips.",
+  voterActivity: "Voters choose 2 people to have a fake wedding."
 },
 {
   songTitle: "BAD DAYS.",
@@ -4281,8 +4281,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Sally, When The Wine Runs Out",
   artist: "ROLE MODEL",
-  generalActivity: "Wine Count: anyone drinking wine drinks 2 sips.",
-  voterActivity: "Refill Boss: choose someone to top up a drink OR sip 3."
+  generalActivity: "Anyone drinking wine drinks 2 sips.",
+  voterActivity: "Voters need to choose someone to scull a glass of someone's wine."
 },
 {
   songTitle: "Mars",
@@ -4305,14 +4305,14 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Berghain",
   artist: "ROSALÍA, Björk & Yves Tumor",
-  generalActivity: "Club Energy: everyone bounce for 5 seconds — last mover drinks 2 sips.",
-  voterActivity: "DJ Pick: choose someone to fake DJ OR sip 3."
+  generalActivity: "Everyone not wearing black drinks 3 sips.",
+  voterActivity: "Voters do a fake DJ set on the deck."
 },
 {
   songTitle: "car",
   artist: "Royel Otis",
-  generalActivity: "Licence Check: anyone with a licence drinks 2 sips.",
-  voterActivity: "Parallel Park: choose someone to mime parking OR sip 3."
+  generalActivity: "Nepo babies: anyone who got a job because of family (and Tom due to all the loans from Wa) drinks 2 sips.",
+  voterActivity: "Voters vote on the worst driver to finish their drink."
 },
 {
   songTitle: "moody",
@@ -4588,7 +4588,7 @@ export const SONGS: SongRow[] = [
   songTitle: "If It Makes You Happy [triple j Like A Version 2025]",
   artist: "Skegss",
   generalActivity: "Smile Check: anyone not smiling drinks 2.",
-  voterActivity: "Joy Dealer: choose someone to hype the room OR sip 3."
+  voterActivity: "Everyone has one chance to make the voters laugh. If it makes the voter happy, they drink. If not, the person drinks."
 },
 {
   songTitle: "So Excited",
@@ -4750,13 +4750,13 @@ export const SONGS: SongRow[] = [
   songTitle: "12 to 12",
   artist: "sombr",
   generalActivity: "Clock Game: everyone guess the current time. Furthest off drinks 2.",
-  voterActivity: "Choose someone to count backwards from 20 OR sip 3."
+  voterActivity: "Voters give out 12 drinks to 1 person."
 },
 {
   songTitle: "back to friends",
   artist: "sombr",
   generalActivity: "Ex Talk: anyone who has stayed friends with an ex drinks 2.",
-  voterActivity: "Choose two people to awkwardly compliment each other OR both drink."
+  voterActivity: "Voters who have slept with someone at the party need to say who and drink 1 per person. Good luck going back to being friends."
 },
 {
   songTitle: "I Wish I Knew How to Quit You",
@@ -4767,8 +4767,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "undressed",
   artist: "sombr",
-  generalActivity: "Layer Check: anyone wearing more than 2 layers drinks 2.",
-  voterActivity: "Choose someone to remove one accessory OR drink 3."
+  generalActivity: "Everyone removes one item of clothing until the next song.",
+  voterActivity: "Voters have to do a nudie run. Cmon. It was too obvious."
 },
 {
   songTitle: "we never dated",
@@ -4845,8 +4845,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Whateverrrr",
   artist: "Spacey Jane",
-  generalActivity: "Care Level: everyone shrugs dramatically. Last shrug drinks 2.",
-  voterActivity: "Choose someone to sarcastically compliment you OR sip 3."
+  generalActivity: "Everyone shrugs. Last shrug drinks 2.",
+  voterActivity: "Idc about making one for this. Voters finish their drink. Whatever."
 },
 {
   songTitle: "AIN'T MY GAME",
@@ -4947,8 +4947,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Dracula",
   artist: "Tame Impala",
-  generalActivity: "Vampire Rules: nobody can show teeth for 10 seconds. First fang-flash drinks 2.",
-  voterActivity: "The voter picks a victim — they must do a spooky neck bite mime OR drink 3."
+  generalActivity: "Everyone jump in pool.",
+  voterActivity: "The voters get to bite Goose. Taste of his own Dracula medicine."
 },
 {
   songTitle: "End Of Summer",
@@ -5007,25 +5007,25 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Nobody's Girl",
   artist: "Tate McRae",
-  generalActivity: "Independent Icons: anyone who’s single (or claims the vibe) drinks 2.",
+  generalActivity: "Canadian beer pong (Tate McRae is Canadian).",
   voterActivity: "The voter picks someone to say “I don’t need you” dramatically to an object OR drink 3."
 },
 {
   songTitle: "Revolving Door",
   artist: "Tate McRae",
-  generalActivity: "Spin Test: everyone does one slow turn. Dizziest person drinks 2.",
+  generalActivity: "Canadian beer pong (Tate McRae is Canadian).",
   voterActivity: "The voter chooses someone to swap seats with another person OR drink 3."
 },
 {
   songTitle: "Sports Car",
   artist: "Tate McRae",
-  generalActivity: "Car Brands: go around naming car brands. First fail drinks 2.",
+  generalActivity: "Canadian beer pong (Tate McRae is Canadian).",
   voterActivity: "The voter picks someone to do a ‘vroom vroom’ lap of the room OR drink 3."
 },
 {
   songTitle: "TIT FOR TAT",
   artist: "Tate McRae",
-  generalActivity: "Petty Tax: last person to point at someone else drinks 2 (no thinking time).",
+  generalActivity: "Canadian beer pong (Tate McRae is Canadian).",
   voterActivity: "The voter chooses two people for rock-paper-scissors — loser drinks 3."
 },
 {
@@ -5110,19 +5110,19 @@ export const SONGS: SongRow[] = [
   songTitle: "Catalonia Dreams",
   artist: "The Terrys",
   generalActivity: "Travel Dreams: go around naming countries you’d visit. First repeat/blank drinks 2.",
-  voterActivity: "The voter chooses someone to say a fake travel vlog intro OR drink 3."
+  voterActivity: "Voters have to kiss all people at the party who have Spanish heritage."
 },
 {
   songTitle: "Changes [triple j Like A Version 2025]",
   artist: "The Terrys",
   generalActivity: "Switcheroo: everyone swaps one item with the person next to them. Last to swap drinks 2.",
-  voterActivity: "The voter chooses someone to change one thing right now (hat, jacket, seat) OR drink 3."
+  voterActivity: "Voters choose someone and tell them an item of clothing they have to remove."
 },
 {
   songTitle: "Eraser",
   artist: "The Terrys",
   generalActivity: "Memory Wipe: everyone says the last thing they googled. Refuse = drink 2.",
-  voterActivity: "The voter chooses someone to delete ONE recent photo (or pretend-delete) OR drink 3."
+  voterActivity: "Voters have to tell their deepest, darkest secret. Wish we could 'erase' everyone's mind!"
 },
 {
   songTitle: "Spezial",
@@ -5134,7 +5134,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Stay Free",
   artist: "The Terrys",
   generalActivity: "Freedom Toast: anyone who’s ever quit a job/uni subject drinks 2.",
-  voterActivity: "The voter chooses someone to break an imaginary chain (rip shirt optional lol) OR drink 3."
+  voterActivity: "Voters choose someone to moon to prove they are staying free."
 },
 {
   songTitle: "BE MINE",
@@ -5163,7 +5163,7 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Sugar On My Tongue",
   artist: "Tyler, The Creator",
-  generalActivity: "Tom Behl-Shanks has to kiss 3 guys on the lips.",
+  generalActivity: "Everyone slaps Malby's stomach. In 2024 he had too much sugar in his tongue so the naughty fatty needs to be punished.",
   voterActivity: "Voters have to kiss Tom Behl-Shanks on the lips."
 },
 {
@@ -5607,8 +5607,8 @@ export const SONGS: SongRow[] = [
 {
   songTitle: "Victory Lap",
   artist: "Windwaker",
-  generalActivity: "Champion’s lap: the person with the fullest drink takes a mini victory lap around the room while everyone counts to 5. If they spill, they drink 2.",
-  voterActivity: "The voter picks someone to do a tiny lap and high-five 3 people. Each rejected high-five = 1 sip for them."
+  generalActivity: "Victory lap: the person with the fullest drink takes a mini victory lap around the room while everyone counts to 5. If they spill, they drink 2.",
+  voterActivity: "Voters need to race each other around the yard. Loser drinks."
 },
 {
   songTitle: "Spend My Nights",
@@ -5710,7 +5710,7 @@ export const SONGS: SongRow[] = [
   songTitle: "Lose Control",
   artist: "Young Franco, EARTHGANG & Jafunk",
   generalActivity: "Control test: everyone holds their drink at arm’s length while the group counts to 10. Anyone who drops/lowers it loses control and drinks 2.",
-  voterActivity: "The voter chooses someone to ‘lose control’ for 10 seconds: do the messiest dance they can. Group votes: if it’s not unhinged enough, they drink 3."
+  voterActivity: "The voter chooses someone to finish their drink. They're bloody gonna lose control. Absolutely bonkers."
 },
 {
   songTitle: "Music Sounds Better With Me",
