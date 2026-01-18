@@ -16,7 +16,10 @@ type Option = {
   songTitle: string;
   artist: string;
   haystack: string;
+  key: string; // normalized unique key for song
 };
+
+const STORAGE_KEY = "h100figtree:joinDraft:v1";
 
 export default function JoinPage() {
   const [name, setName] = useState("");
@@ -24,7 +27,6 @@ export default function JoinPage() {
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // ✅ Browser tab title
   useEffect(() => {
     document.title = "Join the Party • Hottest 100 in Figtree";
   }, []);
@@ -37,6 +39,7 @@ export default function JoinPage() {
         songTitle: s.songTitle,
         artist: s.artist,
         haystack: norm(`${s.songTitle} ${s.artist}`),
+        key: norm(label), // stable enough for "already selected" checks
       };
     });
   }, []);
@@ -47,6 +50,14 @@ export default function JoinPage() {
     return m;
   }, [options]);
 
+  // ✅ Determine which song-keys are already selected across the whole form
+  const selectedKeysByIndex = useMemo(() => {
+    return voteInputs.map((v) => {
+      const k = norm(v);
+      return k || "";
+    });
+  }, [voteInputs]);
+
   function setVote(i: number, v: string) {
     setVoteInputs((prev) => {
       const next = [...prev];
@@ -55,11 +66,41 @@ export default function JoinPage() {
     });
   }
 
+  // ✅ Prefill for edit mode
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const wantsEdit = sp.get("edit") === "1";
+    if (!wantsEdit) return;
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw) as { name?: string; voteInputs?: string[] };
+      const storedName = (parsed?.name || "").toString();
+      const storedVotes = Array.isArray(parsed?.voteInputs) ? parsed.voteInputs.map(String) : [];
+
+      const isEmptyNow = !name.trim() && voteInputs.every((v) => !v || !v.trim());
+      if (isEmptyNow) {
+        setName(storedName);
+        setVoteInputs((prev) => {
+          const next = [...prev];
+          for (let i = 0; i < 10; i++) next[i] = storedVotes[i] || "";
+          return next;
+        });
+      }
+    } catch {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function submit() {
     setStatus("saving");
     setErrorMsg("");
 
-    const votes = voteInputs
+    // Resolve selected songTitles
+    const resolved = voteInputs
       .map((v) => labelToSongTitle.get(norm(v)))
       .filter(Boolean) as string[];
 
@@ -69,16 +110,30 @@ export default function JoinPage() {
       return;
     }
 
-    if (votes.length === 0) {
+    if (resolved.length === 0) {
       setStatus("error");
       setErrorMsg("Select at least 1 song.");
+      return;
+    }
+
+    // ✅ Duplicate protection (in case user typed manually)
+    const seen = new Set<string>();
+    const dupes: string[] = [];
+    for (const t of resolved) {
+      const k = norm(t);
+      if (seen.has(k)) dupes.push(t);
+      seen.add(k);
+    }
+    if (dupes.length > 0) {
+      setStatus("error");
+      setErrorMsg("You can’t vote for the same song twice. Remove the duplicate and try again.");
       return;
     }
 
     const res = await fetch("/api/votes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, votes: votes.slice(0, 10) }),
+      body: JSON.stringify({ name, votes: resolved.slice(0, 10) }),
     });
 
     const json = await res.json();
@@ -89,11 +144,17 @@ export default function JoinPage() {
       return;
     }
 
+    // Save draft for prefill on edit
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ name: name.trim(), voteInputs }));
+    } catch {}
+
     setStatus("saved");
+
+    window.location.assign(`/success?name=${encodeURIComponent(name.trim())}`);
   }
 
-  const headerText =
-    status === "saved" ? "You’re in ✅" : status === "saving" ? "Saving…" : "Join the party";
+  const headerText = status === "saving" ? "Saving…" : "Join the party";
 
   return (
     <main style={styles.page}>
@@ -110,7 +171,7 @@ export default function JoinPage() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Cob / Jacob"
+            placeholder="Type your name or nickname..."
             style={styles.input}
             inputMode="text"
             autoComplete="nickname"
@@ -129,6 +190,7 @@ export default function JoinPage() {
                 value={v}
                 onChange={(next) => setVote(i, next)}
                 options={options}
+                selectedKeysByIndex={selectedKeysByIndex}
               />
             ))}
           </div>
@@ -136,10 +198,6 @@ export default function JoinPage() {
           <button onClick={submit} disabled={status === "saving"} style={styles.button}>
             {status === "saving" ? "Saving…" : "Submit votes"}
           </button>
-
-          {status === "saved" && (
-            <div style={styles.success}>✅ Saved! You can re-submit anytime.</div>
-          )}
 
           {status === "error" && <div style={styles.error}>❌ {errorMsg}</div>}
         </section>
@@ -161,27 +219,45 @@ function VotePickerRow({
   value,
   onChange,
   options,
+  selectedKeysByIndex,
 }: {
   index: number;
   value: string;
   onChange: (v: string) => void;
   options: Option[];
+  selectedKeysByIndex: string[];
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const rowRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
 
+  const myKey = norm(value);
+  const selectedElsewhere = useMemo(() => {
+    const s = new Set<string>();
+    selectedKeysByIndex.forEach((k, i) => {
+      if (!k) return;
+      if (i === index) return; // allow current row's selection
+      s.add(k);
+    });
+    return s;
+  }, [selectedKeysByIndex, index]);
+
+  // ✅ Full list when empty; filtered when typing; minus already-selected songs
   const filtered = useMemo(() => {
     const q = norm(value);
-    if (!q) return options.slice(0, 60);
 
-    return options
-      .map((o) => ({ o, idx: o.haystack.indexOf(q) }))
-      .filter((x) => x.idx !== -1)
-      .sort((a, b) => a.idx - b.idx)
-      .slice(0, 80)
-      .map((x) => x.o);
-  }, [value, options]);
+    const base = !q
+      ? options
+      : options
+          .map((o) => ({ o, idx: o.haystack.indexOf(q) }))
+          .filter((x) => x.idx !== -1)
+          .sort((a, b) => a.idx - b.idx)
+          .slice(0, 200)
+          .map((x) => x.o);
+
+    // remove already-selected elsewhere
+    return base.filter((o) => !selectedElsewhere.has(o.key) || o.key === myKey);
+  }, [value, options, selectedElsewhere, myKey]);
 
   function openPickerFocus() {
     setOpen(true);
@@ -248,14 +324,24 @@ function VotePickerRow({
 
         <button
           type="button"
-          aria-label="Open song list"
+          aria-label={open ? "Close song list" : "Open song list"}
           onClick={(e) => {
             e.preventDefault();
-            openPickerFocus();
+            if (open) {
+              setOpen(false);
+              requestAnimationFrame(() => inputRef.current?.focus());
+            } else {
+              openPickerFocus();
+            }
           }}
           style={styles.dropdownBtn}
         >
-          <span style={styles.dropdownIconWrap}>
+          <span
+            style={{
+              ...styles.dropdownIconWrap,
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          >
             <ChevronDown />
           </span>
         </button>
@@ -285,18 +371,9 @@ function VotePickerRow({
   );
 }
 
-/* ---------- ICON ---------- */
-
 function ChevronDown() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      style={{ display: "block" }} // ✅ removes baseline weirdness
-      aria-hidden
-      focusable="false"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" style={{ display: "block" }} aria-hidden>
       <path
         d="M6.7 9.2a1 1 0 0 1 1.4 0L12 13.1l3.9-3.9a1 1 0 1 1 1.4 1.4l-4.6 4.6a1 1 0 0 1-1.4 0L6.7 10.6a1 1 0 0 1 0-1.4z"
         fill="currentColor"
@@ -304,8 +381,6 @@ function ChevronDown() {
     </svg>
   );
 }
-
-/* ---------- STYLES ---------- */
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
@@ -316,13 +391,9 @@ const styles: Record<string, React.CSSProperties> = {
       'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji"',
     padding: 16,
   },
-
   shell: { maxWidth: 760, margin: "0 auto" },
-
   header: { marginBottom: 14 },
-
   title: { fontSize: 40, fontWeight: 900, margin: "0 0 8px" },
-
   subtitle: { opacity: 0.8, fontSize: 16, margin: 0 },
 
   card: {
@@ -360,16 +431,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   votesTitle: { fontWeight: 900, fontSize: 18 },
-
   votesHint: { opacity: 0.7 },
-
   votesGrid: { display: "grid", gap: 14 },
 
-  voteRow: {
-    display: "grid",
-    gridTemplateColumns: "44px 1fr",
-    gap: 12,
-  },
+  voteRow: { display: "grid", gridTemplateColumns: "44px 1fr", gap: 12 },
 
   voteNum: {
     width: 44,
@@ -396,7 +461,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 18,
   },
 
-  // ✅ FIXED: robust vertical centering for the arrow
   dropdownBtn: {
     position: "absolute",
     right: 0,
@@ -412,7 +476,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    lineHeight: 0, // ✅ prevents font baseline drift
+    lineHeight: 0,
     padding: 0,
   },
 
@@ -422,6 +486,8 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     width: "100%",
     height: "100%",
+    transition: "transform 180ms ease",
+    willChange: "transform",
   },
 
   dropdown: {
@@ -433,7 +499,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: "rgba(8,20,44,0.96)",
     border: "1px solid rgba(255,255,255,0.14)",
     boxShadow: "0 18px 55px rgba(0,0,0,0.42)",
-    maxHeight: 320,
+    maxHeight: 360,
     overflowY: "auto",
     zIndex: 50,
   },
@@ -450,9 +516,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   dropdownMain: { fontWeight: 900 },
-
   dropdownSub: { fontSize: 13, opacity: 0.7 },
-
   dropdownEmpty: { padding: 14, opacity: 0.8 },
 
   button: {
@@ -468,15 +532,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 18,
   },
 
-  success: {
-    marginTop: 12,
-    padding: 12,
-    borderRadius: 14,
-    background: "rgba(120,255,173,0.10)",
-    border: "1px solid rgba(120,255,173,0.22)",
-    fontWeight: 800,
-  },
-
   error: {
     marginTop: 12,
     padding: 12,
@@ -487,7 +542,6 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   footer: { marginTop: 16 },
-
   backLink: {
     color: "#A9C6FF",
     textDecoration: "none",
