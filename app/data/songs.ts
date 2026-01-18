@@ -850,7 +850,7 @@ export const SONGS: SongRow[] = [
   songTitle: "T&A",
   artist: "Blondshell",
   generalActivity:
-    "CLOTHING TAX: remove ONE harmless item (hat/jacket/shoe) OR drink 3 sips.",
+    "Everyone finishes their drink.",
   voterActivity:
     "Voters dare: choose someone to remove TWO items OR drink 4 sips (their choice)."
 },
