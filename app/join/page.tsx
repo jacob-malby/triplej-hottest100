@@ -3,12 +3,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { SONGS } from "@/app/data/songs";
 
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Join the Party • Hottest 100 in Figtree",
-};
-
 function norm(s: string) {
   return (s || "")
     .toLowerCase()
