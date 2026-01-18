@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from "react";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "You’re in • Hottest 100 in Figtree",
+};
+
 export default function SuccessPage() {
   const [name, setName] = useState("");
 
   useEffect(() => {
-    document.title = "You’re in • Hottest 100 in Figtree";
 
     // ✅ window-safe: only runs in the browser
     const sp = new URLSearchParams(window.location.search);
