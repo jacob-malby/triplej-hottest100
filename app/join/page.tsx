@@ -21,6 +21,80 @@ type Option = {
 
 const STORAGE_KEY = "h100figtree:joinDraft:v1";
 
+// ---------- RANDOMISE CONFIG ----------
+const ALLOWED_TITLES = new Set(
+  [
+    "Man I Need",
+    "Dancing2",
+    "Keith",
+    "Dracula",
+    "iPod Touch",
+    "WHERE IS MY HUSBAND",
+    "Whateverrrr",
+    "No Broke Boys",
+    "12 to 12",
+    "Dreamin",
+    "Nice To Each Other",
+    "Disco Cowgirl",
+    "Victory Lap",
+    "The Subway",
+    "Anxiety",
+    "back to friends",
+    "Fame is a Gun",
+    "undressed",
+    "Love Balloon",
+    "Please Don't Move To Melbourne",
+    "Sally, When The Wine Runs Out",
+    "Berghain",
+    "Illegal",
+    "car",
+    "Melodramatic Fanatic",
+    "Pussy Palace",
+    "So Easy [To Fall In Love]",
+    "What Was That",
+    "you're a star",
+    "In Another Life",
+    "Rein Me In",
+    "Sports car",
+    "H.O.O.D - 2025 Mix",
+    "Khe Sanh [Like A Version]",
+    "Pavement",
+    "Shut You Out",
+    "Sugar On My Tongue",
+    "The Fate of Ophelia",
+    "A COLD PLAY",
+    "BALCONY",
+    "Basic Being Basic",
+    "DEATH CULT ZOMBIE",
+    "Ordinary",
+    "Backseat",
+    "mangetout",
+    "Parachute",
+    "Cry For Me",
+    "Jealous Type",
+    "One Thing",
+    "Stay",
+    "It Gets Better [Forever Mix]",
+    "NOKIA",
+    "NOT OK",
+    "DtMF",
+    "I Write Sins Not Tragedies [triple j Like A Version 2025]",
+    "PEACE",
+    "Bloom Baby Bloom",
+    "If It Makes You Happy [triple j Like A Version 2025]",
+    "Relationships",
+    "Ashes to Ashes [triple j Like A Version 2025]",
+    "Can You Feel My Heart [triple j Like A Version 2025]",
+  ].map(norm)
+);
+
+function randInt(maxExclusive: number) {
+  if (maxExclusive <= 0) return 0;
+  const a = new Uint32Array(1);
+  crypto.getRandomValues(a);
+  return a[0] % maxExclusive;
+}
+
 export default function JoinPage() {
   const [name, setName] = useState("");
   const [voteInputs, setVoteInputs] = useState<string[]>(Array.from({ length: 10 }, () => ""));
@@ -40,12 +114,56 @@ export default function JoinPage() {
       };
     });
   }, []);
+    const allowedOptions = useMemo(() => {
+    // match using normalised SONGS songTitle
+    return options.filter((o) => ALLOWED_TITLES.has(norm(o.songTitle)));
+  }, [options]);
 
   const labelToSongTitle = useMemo(() => {
     const m = new Map<string, string>();
     for (const o of options) m.set(norm(o.label), o.songTitle);
     return m;
   }, [options]);
+
+    const hasAtLeastOneSelection = useMemo(() => {
+    return voteInputs.some((v) => labelToSongTitle.has(norm(v)));
+  }, [voteInputs, labelToSongTitle]);
+  
+    const isFullyFilled = useMemo(() => {
+    return voteInputs.filter((v) => labelToSongTitle.has(norm(v))).length >= 10;
+  }, [voteInputs, labelToSongTitle]);
+
+
+  function randomiseVotes() {
+    setVoteInputs((prev) => {
+      const next = [...prev];
+
+      // track used song keys based on existing labels in the inputs
+      const usedKeys = new Set<string>();
+      for (const v of next) {
+        const k = norm(v);
+        if (k) usedKeys.add(k);
+      }
+
+      // pool = allowed songs minus already used
+      const pool = allowedOptions.filter((o) => !usedKeys.has(o.key));
+
+      // fill empty rows only
+      for (let i = 0; i < 10; i++) {
+        if ((next[i] || "").trim()) continue;
+        if (pool.length === 0) break;
+
+        const j = randInt(pool.length);
+        const pick = pool[j];
+        next[i] = pick.label;
+
+        // remove to avoid duplicates
+        pool.splice(j, 1);
+      }
+
+      return next;
+    });
+  }
 
   // ✅ Determine which song-keys are already selected across the whole form
   const selectedKeysByIndex = useMemo(() => {
@@ -164,7 +282,7 @@ export default function JoinPage() {
         </header>
 
         <section style={styles.card}>
-          <label style={styles.label}>Name / Nickname</label>
+          <div style={styles.nameHeader}>Name / Nickname</div>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -173,6 +291,21 @@ export default function JoinPage() {
             inputMode="text"
             autoComplete="nickname"
           />
+
+          <button
+            type="button"
+            onClick={randomiseVotes}
+            disabled={isFullyFilled}
+            style={{
+              ...styles.randomBtn,
+              opacity: isFullyFilled ? 0.5 : 1,
+              cursor: isFullyFilled ? "not-allowed" : "pointer",
+            }}
+          >
+            {isFullyFilled
+              ? "⬇️ Now, submit your votes!"
+              : `🎲 ${hasAtLeastOneSelection ? "Randomise the rest of my votes" : "Randomise my votes"}`}
+          </button>
 
           <div style={styles.votesHeaderRow}>
             <div style={styles.votesTitle}>Your votes</div>
@@ -227,6 +360,11 @@ function VotePickerRow({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const rowRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
+    const isExactOption = useMemo(() => {
+    const k = norm(value);
+    if (!k) return false;
+    return options.some((o) => o.key === k);
+  }, [value, options]);
 
   const myKey = norm(value);
   const selectedElsewhere = useMemo(() => {
@@ -310,15 +448,33 @@ function VotePickerRow({
             onChange(e.target.value);
             if (!open) setOpen(true);
           }}
-          onFocus={() => setOpen(true)}
-          onClick={() => setOpen(true)}
+          onFocus={() => {
+            if (!isExactOption) setOpen(true);
+          }}
+          onClick={() => {
+            if (!isExactOption) setOpen(true);
+          }}
           placeholder="Search song or artist…"
           style={styles.voteInput}
           inputMode="text"
           autoComplete="off"
           spellCheck={false}
         />
-
+        {isExactOption && value.trim() && (
+          <button
+            type="button"
+            aria-label="Clear selection"
+            onClick={(e) => {
+              e.preventDefault();
+              onChange("");
+              setOpen(false);
+              requestAnimationFrame(() => inputRef.current?.focus());
+            }}
+            style={styles.clearBtn}
+          >
+            <span style={styles.clearX}>×</span>
+          </button>
+        )}
         <button
           type="button"
           aria-label={open ? "Close song list" : "Open song list"}
@@ -428,6 +584,12 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   votesTitle: { fontWeight: 900, fontSize: 18 },
+    nameHeader: {
+    fontWeight: 900,
+    fontSize: 18,
+    marginTop: 16,
+    marginBottom: 6,
+  },
   votesHint: { opacity: 0.7 },
   votesGrid: { display: "grid", gap: 14 },
 
@@ -449,7 +611,7 @@ const styles: Record<string, React.CSSProperties> = {
 
   voteInput: {
     width: "100%",
-    padding: "14px 54px 14px 14px",
+    padding: "14px 98px 14px 14px",
     borderRadius: 18,
     border: "1px solid rgba(255,255,255,0.14)",
     background: "rgba(255,255,255,0.07)",
@@ -475,6 +637,30 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     lineHeight: 0,
     padding: 0,
+  },
+  
+  clearBtn: {
+    position: "absolute",
+    right: 54, // sits just to the left of dropdownBtn
+    top: 0,
+    width: 44,
+    height: "100%",
+    border: "none",
+    background: "transparent",
+    color: "rgba(234,240,255,0.65)",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    lineHeight: 0,
+    padding: 0,
+  },
+
+  clearX: {
+    fontSize: 22,
+    fontWeight: 900,
+    transform: "translateY(-1px)",
+    opacity: 0.8,
   },
 
   dropdownIconWrap: {
@@ -528,6 +714,19 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
     fontSize: 18,
   },
+    randomBtn: {
+    marginTop: 16,
+    width: "100%",
+    padding: 14,
+    borderRadius: 18,
+    border: "1px solid rgba(255,122,26,0.35)",
+    background: "rgba(255,122,26,0.22)",
+    color: "#FFE2C9",
+    fontWeight: 900,
+    cursor: "pointer",
+    fontSize: 18,
+  },
+
 
   error: {
     marginTop: 12,

@@ -5605,12 +5605,6 @@ export const SONGS: SongRow[] = [
   voterActivity: "The voter assigns someone the ‘apathy challenge’: they must react completely deadpan to a compliment. If they crack, they drink 3."
 },
 {
-  songTitle: "Victory Lap",
-  artist: "Windwaker",
-  generalActivity: "Victory lap: the person with the fullest drink takes a mini victory lap around the room while everyone counts to 5. If they spill, they drink 2.",
-  voterActivity: "Voters need to race each other around the yard. Loser drinks."
-},
-{
   songTitle: "Spend My Nights",
   artist: "Winston Surfshirt",
   generalActivity: "Night budget: anyone who spent money after 9pm this week drinks 2. If you can name what you bought, you only drink 1.",
