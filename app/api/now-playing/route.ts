@@ -33,29 +33,40 @@ function splitTitleArtist(text: string): { title: string; artist: string | null 
 }
 
 /**
- * Extract now playing song from Triple J page
+ * Extract now playing song + artwork from Triple J page
  */
 function extractNowPlaying(html: string): {
   title: string | null;
   artist: string | null;
-  debug: { source: string | null; raw: string | null };
+  imageUrl: string | null;
+  debug: { source: string | null; raw: string | null; img: string | null };
 } {
   const $ = cheerio.load(html);
 
-  const heroTitle =
-    $('section[data-component="SongCountdownHero"] h3[id^="title-"]').first().text().trim() ||
-    $('section[data-component="SongCountdownHero"] h3[class*="SongCountdownHero_title"]')
-      .first()
-      .text()
-      .trim();
+  // Try to grab album art from the hero section
+  const hero = $('section[data-component="SongCountdownHero"]').first();
 
-  // ✅ FIX: heroTitle now also splits title/artist if present
+  // Prefer the album art image (usually has "Song artwork" alt), fallback to any img in hero
+  const imgFromAlt =
+    hero.find('img[alt*="Song artwork"]').first().attr("src") ||
+    hero.find("img").first().attr("src") ||
+    null;
+
+  // Make absolute if needed
+  const imageUrl =
+    imgFromAlt && imgFromAlt.startsWith("//") ? `https:${imgFromAlt}` : imgFromAlt;
+
+  const heroTitle =
+    hero.find('h3[id^="title-"]').first().text().trim() ||
+    hero.find('h3[class*="SongCountdownHero_title"]').first().text().trim();
+
   if (heroTitle) {
     const parsed = splitTitleArtist(heroTitle);
     return {
       title: parsed.title || null,
       artist: parsed.artist,
-      debug: { source: "heroTitle", raw: heroTitle },
+      imageUrl: imageUrl || null,
+      debug: { source: "heroTitle", raw: heroTitle, img: imageUrl || null },
     };
   }
 
@@ -65,7 +76,8 @@ function extractNowPlaying(html: string): {
     return {
       title: parsed.title || null,
       artist: parsed.artist,
-      debug: { source: "byIdTitle", raw: byIdTitle },
+      imageUrl: imageUrl || null,
+      debug: { source: "byIdTitle", raw: byIdTitle, img: imageUrl || null },
     };
   }
 
@@ -86,12 +98,18 @@ function extractNowPlaying(html: string): {
       return {
         title: parsed.title || text,
         artist: parsed.artist,
-        debug: { source: `selector:${sel}`, raw: text },
+        imageUrl: imageUrl || null,
+        debug: { source: `selector:${sel}`, raw: text, img: imageUrl || null },
       };
     }
   }
 
-  return { title: null, artist: null, debug: { source: null, raw: null } };
+  return {
+    title: null,
+    artist: null,
+    imageUrl: imageUrl || null,
+    debug: { source: null, raw: null, img: imageUrl || null },
+  };
 }
 
 export async function GET(req: Request) {
@@ -102,11 +120,17 @@ export async function GET(req: Request) {
     let now: {
       title: string | null;
       artist: string | null;
-      debug: { source: string | null; raw: string | null };
+      imageUrl: string | null;
+      debug: { source: string | null; raw: string | null; img: string | null };
     };
 
     if (testSong) {
-      now = { title: testSong, artist: "TEST ARTIST", debug: { source: "test", raw: testSong } };
+      now = {
+        title: testSong,
+        artist: "TEST ARTIST",
+        imageUrl: null,
+        debug: { source: "test", raw: testSong, img: null },
+      };
     } else {
       const tripleRes = await fetch(TRIPLEJ_URL, {
         cache: "no-store",
@@ -167,6 +191,7 @@ export async function GET(req: Request) {
         url: TRIPLEJ_URL,
         nowTitle: now.title,
         artist: now.artist,
+        nowImageUrl: now.imageUrl,
       },
       match: matched
         ? {
@@ -187,9 +212,6 @@ export async function GET(req: Request) {
     });
   } catch (e: any) {
     console.error(e);
-    return Response.json(
-      { ok: false, error: e?.message ?? "Unknown error" },
-      { status: 500 }
-    );
+    return Response.json({ ok: false, error: e?.message ?? "Unknown error" }, { status: 500 });
   }
 }
