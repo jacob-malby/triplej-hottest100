@@ -68,6 +68,21 @@ export default function Home() {
     document.title = "Hottest 100 at Dan's";
   }, []);
 
+  // ✅ simple responsive flag (no layout changes to desktop)
+  const [isPhone, setIsPhone] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 720px)");
+    const apply = () => setIsPhone(!!mq.matches);
+    apply();
+    // Safari compatibility
+    if (mq.addEventListener) mq.addEventListener("change", apply);
+    else mq.addListener(apply);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", apply);
+      else mq.removeListener(apply);
+    };
+  }, []);
+
   const pollMs = 4000;
 
   useEffect(() => {
@@ -124,7 +139,8 @@ export default function Home() {
 
   return (
     <main style={styles.page}>
-      <BackgroundChrome />
+      {/* ✅ Sun appears on all screens EXCEPT phone */}
+      <BackgroundChrome showSun={!isPhone} />
 
       <div style={styles.shell}>
         <header style={styles.header}>
@@ -152,29 +168,29 @@ export default function Home() {
           </div>
         </header>
 
-        <section style={styles.grid}>
+        <section style={isPhone ? styles.gridPhone : styles.grid}>
           {/* NOW PLAYING HERO CARD */}
-          <div style={styles.heroCard}>
+          <div style={isPhone ? styles.heroCardPhone : styles.heroCard}>
             {heroImg && (
               <div
                 aria-hidden
                 style={{
-                  ...styles.heroBg,
+                  ...(isPhone ? styles.heroBgPhone : styles.heroBg),
                   backgroundImage: `url(${heroImg})`,
                 }}
               />
             )}
             <div style={styles.heroOverlay} aria-hidden />
 
-            <div style={styles.heroInner}>
+            <div style={isPhone ? styles.heroInnerPhone : styles.heroInner}>
               <div style={styles.heroTop}>
                 <div style={hasVoters ? styles.accentChipHot : styles.accentChip}>
                   {hasVoters ? "Voters choose 😈" : "Everyone plays 🎉"}
                 </div>
               </div>
 
-              <div style={styles.heroMain}>
-                <div style={styles.heroArtWrap}>
+              <div style={isPhone ? styles.heroMainPhone : styles.heroMain}>
+                <div style={isPhone ? styles.heroArtWrapPhone : styles.heroArtWrap}>
                   {heroImg ? (
                     <img src={heroImg} alt="" style={styles.heroArt} />
                   ) : (
@@ -184,10 +200,12 @@ export default function Home() {
 
                 <div style={styles.heroText}>
                   <div style={styles.heroKicker}>Now playing</div>
-                  <div style={styles.heroSongTitle}>
+                  <div style={isPhone ? styles.heroSongTitlePhone : styles.heroSongTitle}>
                     {heroTitle || (loading ? "Loading…" : "Waiting…")}
                   </div>
-                  {!!heroArtist && <div style={styles.heroArtist}>{heroArtist}</div>}
+                  {!!heroArtist && (
+                    <div style={isPhone ? styles.heroArtistPhone : styles.heroArtist}>{heroArtist}</div>
+                  )}
                 </div>
               </div>
 
@@ -204,22 +222,22 @@ export default function Home() {
                 </div>
               )}
 
-              <div style={styles.heroActivityBlock}>
-                <div style={styles.heroActivityLabel}>Game:</div>
-                <div style={styles.heroActivityText}>{activity}</div>
+              <div style={isPhone ? styles.heroActivityBlockPhone : styles.heroActivityBlock}>
+                <div style={styles.heroActivityLabel}>GAME</div>
+                <div style={isPhone ? styles.heroActivityTextPhone : styles.heroActivityText}>{activity}</div>
               </div>
             </div>
           </div>
 
           {/* QR CARD */}
           <div style={styles.card}>
-            <JoinQr />
+            <JoinQr isPhone={isPhone} />
           </div>
         </section>
 
         {/* KEEP TIP FOOTER */}
         <footer style={styles.footer}>
-          <div style={styles.footerInner}>
+          <div style={isPhone ? styles.footerInnerPhone : styles.footerInner}>
             <span style={styles.footerPill}>Tip</span>
             <span style={styles.footerText}>
               Put this page on the big screen. Guests scan the QR to submit votes on their phone.
@@ -233,7 +251,7 @@ export default function Home() {
 
 /* ---------- QR ---------- */
 
-function JoinQr() {
+function JoinQr({ isPhone }: { isPhone: boolean }) {
   const [origin, setOrigin] = useState("");
 
   useEffect(() => {
@@ -245,25 +263,25 @@ function JoinQr() {
   return (
     <div style={styles.qrWrap}>
       <div>
-        <div style={styles.cardLabel}>Join + Submit Votes</div>
+        <div style={styles.cardLabel}>JOIN + SUBMIT VOTES</div>
         <div style={styles.qrTitle}>Scan to join the party</div>
         <div style={styles.qrSub}>Enter your name and choose up to 10 songs you voted for.</div>
       </div>
 
-      <div style={styles.qrBody}>
-        <div style={styles.qrBox}>
+      <div style={isPhone ? styles.qrBodyPhone : styles.qrBody}>
+        <div style={isPhone ? styles.qrBoxPhone : styles.qrBox}>
           {joinUrl ? (
             <img
               alt="QR code"
               src={`/api/qr?data=${encodeURIComponent(joinUrl)}`}
-              style={styles.qrImg}
+              style={isPhone ? styles.qrImgPhone : styles.qrImg}
             />
           ) : (
             <div style={styles.qrLoading}>Generating QR…</div>
           )}
         </div>
 
-        <div>
+        <div style={styles.qrUrlBlock}>
           <div style={styles.qrUrlLabel}>Join link</div>
           <div style={styles.qrUrl}>{joinUrl || "…"}</div>
         </div>
@@ -274,14 +292,14 @@ function JoinQr() {
 
 /* ---------- BACKGROUND ---------- */
 
-function BackgroundChrome() {
+function BackgroundChrome({ showSun }: { showSun: boolean }) {
   return (
     <>
       <div style={styles.bgSky} />
       <div style={styles.bgCloudsA} />
       <div style={styles.bgCloudsB} />
       <div style={styles.bgCloudsC} />
-      <SunSticker />
+      {showSun && <SunSticker />}
       <div style={styles.bgGrain} />
       <div style={styles.bgScan} />
       <div style={styles.bgVignette} />
@@ -349,6 +367,9 @@ const styles: Record<string, React.CSSProperties> = {
 
   grid: { display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 14 },
 
+  // ✅ phone: stack hero → QR → tip (tip is already after section)
+  gridPhone: { display: "grid", gridTemplateColumns: "1fr", gap: 14 },
+
   // QR card (right)
   card: {
     background: "rgba(255,255,255,0.06)",
@@ -370,12 +391,34 @@ const styles: Record<string, React.CSSProperties> = {
     minHeight: 360,
   },
 
+  // ✅ phone hero: slightly tighter + smaller minHeight
+  heroCardPhone: {
+    position: "relative",
+    overflow: "hidden",
+    borderRadius: 18,
+    border: "1px solid rgba(255,255,255,0.12)",
+    background: "rgba(255,255,255,0.06)",
+    backdropFilter: "blur(10px)",
+    padding: 0,
+    minHeight: 300,
+  },
+
   heroBg: {
     position: "absolute",
     inset: 0,
     backgroundSize: "cover",
     backgroundPosition: "center",
     filter: "blur(18px)",
+    transform: "scale(1.08)",
+    opacity: 0.55,
+  },
+
+  heroBgPhone: {
+    position: "absolute",
+    inset: 0,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    filter: "blur(16px)",
     transform: "scale(1.08)",
     opacity: 0.55,
   },
@@ -396,6 +439,15 @@ const styles: Record<string, React.CSSProperties> = {
     height: "100%",
   },
 
+  heroInnerPhone: {
+    position: "relative",
+    padding: 14,
+    display: "flex",
+    flexDirection: "column",
+    gap: 12,
+    height: "100%",
+  },
+
   heroTop: {
     display: "flex",
     justifyContent: "flex-end",
@@ -408,6 +460,14 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: "center",
   },
 
+  // ✅ phone hero main: slightly smaller art + tighter gap
+  heroMainPhone: {
+    display: "grid",
+    gridTemplateColumns: "104px 1fr",
+    gap: 12,
+    alignItems: "center",
+  },
+
   heroArtWrap: {
     width: 140,
     height: 140,
@@ -416,6 +476,16 @@ const styles: Record<string, React.CSSProperties> = {
     border: "1px solid rgba(255,255,255,0.14)",
     background: "rgba(255,255,255,0.06)",
     boxShadow: "0 18px 50px rgba(0,0,0,0.35)",
+  },
+
+  heroArtWrapPhone: {
+    width: 104,
+    height: 104,
+    borderRadius: 16,
+    overflow: "hidden",
+    border: "1px solid rgba(255,255,255,0.14)",
+    background: "rgba(255,255,255,0.06)",
+    boxShadow: "0 16px 40px rgba(0,0,0,0.35)",
   },
 
   heroArt: {
@@ -456,8 +526,22 @@ const styles: Record<string, React.CSSProperties> = {
     wordBreak: "break-word",
   },
 
+  heroSongTitlePhone: {
+    fontSize: 28,
+    fontWeight: 900,
+    lineHeight: 1.08,
+    marginBottom: 6,
+    wordBreak: "break-word",
+  },
+
   heroArtist: {
     fontSize: 18,
+    fontWeight: 800,
+    opacity: 0.85,
+  },
+
+  heroArtistPhone: {
+    fontSize: 14,
     fontWeight: 800,
     opacity: 0.85,
   },
@@ -499,6 +583,19 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 8,
   },
 
+  heroActivityBlockPhone: {
+    marginTop: 4,
+    paddingTop: 10,
+    borderTop: "1px solid rgba(255,255,255,0.10)",
+    minHeight: 84,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    textAlign: "left",
+    gap: 8,
+  },
+
   // sentence case + new wording
   heroActivityLabel: {
     fontSize: 14,
@@ -510,6 +607,13 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 24,
     fontWeight: 900,
     lineHeight: 1.15,
+    maxWidth: 640,
+  },
+
+  heroActivityTextPhone: {
+    fontSize: 18,
+    fontWeight: 900,
+    lineHeight: 1.18,
     maxWidth: 640,
   },
 
@@ -535,11 +639,32 @@ const styles: Record<string, React.CSSProperties> = {
 
   qrSub: { opacity: 0.75 },
 
-  qrBody: { display: "flex", gap: 14 },
+  qrBody: { display: "flex", gap: 14, alignItems: "flex-start" },
 
+  // ✅ phone: stack QR box then link under it; keep QR box square and centered
+  qrBodyPhone: { display: "flex", flexDirection: "column", gap: 12, alignItems: "center" },
+
+  // ✅ DESKTOP: force the WHITE BOX to be a square
   qrBox: {
     width: 220,
     height: 220,
+    minWidth: 220,
+    minHeight: 220,
+    maxWidth: 220,
+    maxHeight: 220,
+    background: "#fff",
+    display: "grid",
+    placeItems: "center",
+    borderRadius: 14,
+    flex: "0 0 auto",
+    alignSelf: "flex-start",
+  },
+
+  // ✅ PHONE: keep your working square behavior (responsive square)
+  qrBoxPhone: {
+    width: 220,
+    aspectRatio: "1 / 1",
+    height: "auto",
     background: "#fff",
     display: "grid",
     placeItems: "center",
@@ -551,9 +676,21 @@ const styles: Record<string, React.CSSProperties> = {
     height: 200,
     objectFit: "contain",
     aspectRatio: "1 / 1",
+    display: "block",
+  },
+
+  // ✅ phone: scale QR image with the square, while keeping it square
+  qrImgPhone: {
+    width: "88%",
+    height: "88%",
+    objectFit: "contain",
+    aspectRatio: "1 / 1",
+    display: "block",
   },
 
   qrLoading: { color: "#000" },
+
+  qrUrlBlock: { width: "100%" },
 
   qrUrlLabel: { fontSize: 12, marginTop: 6 },
 
@@ -566,6 +703,14 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     gap: 12,
     alignItems: "center",
+  },
+
+  // ✅ phone: allow wrap + better spacing
+  footerInnerPhone: {
+    display: "flex",
+    gap: 10,
+    alignItems: "flex-start",
+    flexWrap: "wrap",
   },
 
   footerPill: {
@@ -601,8 +746,7 @@ const styles: Record<string, React.CSSProperties> = {
   bgCloudsB: {
     position: "absolute",
     inset: "-10%",
-    background:
-      "repeating-linear-gradient(10deg, rgba(0,154,214,0.12) 0px, transparent 14px)",
+    background: "repeating-linear-gradient(10deg, rgba(0,154,214,0.12) 0px, transparent 14px)",
     opacity: 0.18,
   },
 

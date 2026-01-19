@@ -277,12 +277,12 @@ export default function JoinPage() {
         <header style={styles.header}>
           <h1 style={styles.title}>{headerText}</h1>
           <p style={styles.subtitle}>
-            Tap a row to type — or hit the arrow to open the full song list.
+            Click/tap a row to type or hit the arrow to open the full song list.
           </p>
         </header>
 
         <section style={styles.card}>
-          <div style={styles.nameHeader}>Name / Nickname</div>
+          <div style={styles.nameHeader}>Name:</div>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -308,7 +308,7 @@ export default function JoinPage() {
           </button>
 
           <div style={styles.votesHeaderRow}>
-            <div style={styles.votesTitle}>Your votes</div>
+            <div style={styles.votesTitle}>Your votes:</div>
             <div style={styles.votesHint}>Up to 10</div>
           </div>
 
