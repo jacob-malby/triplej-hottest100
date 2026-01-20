@@ -283,8 +283,16 @@ function JoinQr({ isPhone }: { isPhone: boolean }) {
 
         <div style={styles.qrUrlBlock}>
           <div style={styles.qrUrlLabel}>Join link</div>
-          <div style={styles.qrUrl}>{joinUrl || "…"}</div>
+
+          {joinUrl ? (
+            <a href={joinUrl} style={styles.qrUrlLink}>
+              {joinUrl}
+            </a>
+          ) : (
+            <div style={styles.qrUrl}>…</div>
+          )}
         </div>
+
       </div>
     </div>
   );
@@ -639,7 +647,7 @@ const styles: Record<string, React.CSSProperties> = {
 
   qrSub: { opacity: 0.75 },
 
-  qrBody: { display: "flex", gap: 14, alignItems: "flex-start" },
+  qrBody: { display: "flex", gap: 14, alignItems: "center" },
 
   // ✅ phone: stack QR box then link under it; keep QR box square and centered
   qrBodyPhone: { display: "flex", flexDirection: "column", gap: 12, alignItems: "center" },
@@ -690,9 +698,15 @@ const styles: Record<string, React.CSSProperties> = {
 
   qrLoading: { color: "#000" },
 
-  qrUrlBlock: { width: "100%" },
+    qrUrlBlock: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignSelf: "stretch",
+  },
 
-  qrUrlLabel: { fontSize: 12, marginTop: 6 },
+  qrUrlLabel: { fontSize: 12, marginTop: 0, marginBottom: 8, opacity: 0.85 },
 
   qrUrl: { wordBreak: "break-all", fontSize: 12 },
 
